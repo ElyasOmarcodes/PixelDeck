@@ -22,6 +22,10 @@ PixelDeck is a React + TypeScript visual editor for designing App Store screensh
 | Layer renderers | `src/components/canvas/*Node.tsx` |
 | Shared node hooks | `src/hooks/useLayerTransform.ts`, `useLayerEffects.ts`, `useLayerInteraction.ts`, `useBrandColors.ts` |
 | Shared UI primitives | `src/components/ui/` (ModalShell, NumberInput, ToggleSwitch, SegmentedControl, FileUploadButton, InlineEditableLabel) |
+| UI icons | `src/components/ui/Icon.tsx` — the single icon sprite. Never use an emoji or a Unicode dingbat as a UI icon |
+| Interface language (i18n) | `src/i18n/index.ts` (store + `useT`), `src/i18n/locales/{en,ps,fa}.ts` |
+| Native-control styling | `src/index.css` — the `@layer base` block restyles scrollbars, selects, ranges, checkboxes, colour inputs and focus rings |
+| Desktop shell | `src-tauri/` (Tauri v2); Android shell config `capacitor.config.json`; see `docs/native-apps.md` |
 | Properties inspector | `src/components/panels/PropertiesPanel.tsx` |
 | Layer list panel | `src/components/panels/LayersPanel.tsx` |
 | Slide navigator | `src/components/panels/SlideNavigator.tsx` |
@@ -47,6 +51,8 @@ PixelDeck is a React + TypeScript visual editor for designing App Store screensh
 | Headless render page | `src/pages/ExportApp.tsx` |
 | Device specs | `src/assets/mockups/specs.ts` |
 | Device SVGs | `src/assets/mockups/iphone-16-pro.ts`, `pixel-9.ts` |
+| Font catalogue | `src/utils/fonts.ts` (`FONT_LIST`, `WEB_SAFE_FONTS`, `ARABIC_SCRIPT_FONTS`) |
+| App/Android build workflow | `.github/workflows/apps.yml` |
 
 ---
 
@@ -176,6 +182,32 @@ listAssets(): AssetEntry[]
 
 ---
 
+## Interface Language (i18n)
+
+Two different "locale" concepts live in this codebase. Do not mix them.
+
+| Concept | Where | What it controls |
+|---|---|---|
+| **UI language** | `src/i18n` (`useUiLanguageStore`, `useT`) | The editor chrome — labels, tooltips, buttons. Persisted to `localStorage` under `pixeldeck.ui-language`. Never touches project data. |
+| **Design locale** | `project.settings.locales` / `activeLocale` | The *designs* being localized — per-locale slide text and images. Part of the project document and of every export. |
+
+Adding a string:
+
+1. Add the key to `src/i18n/locales/en.ts` (English is the source of truth —
+   `TranslationKey` is derived from it).
+2. TypeScript will now fail until `ps.ts` and `fa.ts` have the key too.
+3. Render it with `const t = useT()` → `t('area.thing')`. `{name}`-style
+   placeholders interpolate via the second argument.
+4. `src/i18n/i18n.test.ts` enforces completeness, matching placeholders and
+   Arabic-script coverage — it will catch a forgotten or untranslated key.
+
+Pashto and Persian are RTL: `lang`/`dir` are stamped on `<html>` by
+`initUiLanguage()` in `src/main.tsx`. Prefer logical Tailwind utilities
+(`text-start`, `ms-*`, `me-*`, `ps-*`, `pe-*`) over physical ones in chrome so
+it mirrors correctly.
+
+---
+
 ## Runtime Mode Detection
 
 `src/main.tsx` checks `window.__EXPORT_CONFIG__`:
@@ -214,6 +246,9 @@ CLI (`cli/export.mjs`) injects `window.__EXPORT_CONFIG__` before page navigation
 - **Pano gap gated on compensate**: `StageCanvas.tsx` uses `effectiveCompensationPx = group && panoCompensate ? panoCompensationPx : 0` — the gap is applied to canvas geometry only while compensation is active. Do NOT make the gap always visible unless the product decision changes again.
 - **Capture mutex is mandatory**: Any code that mutates `activeSlideGroupId`, `activeCanvasFormat`, `activeLocale`, or `panoRenderOverride` and then captures the stage MUST use `acquireCaptureLock()` from `stageCapture.ts`. Removing it causes race conditions between thumbnail generation and export.
 - **`localeAdjust`'s base-format guard is not redundant**: `applyLocaleAdjust`/`applyLocaleAdjustToGroup` in `canvasFormats.ts` explicitly skip the format-scoped `localeAdjust[locale][format]` lookup when `format === BASE_CANVAS_FORMAT`. At the base view, `localeAdjust[locale][BASE_CANVAS_FORMAT]` (base-scoped) and `localeAdjust[locale][format]` (format-scoped) are the *same map cell* — without the guard, the same delta gets applied twice. This exact double-apply shipped once during the locale-adjust rework and was caught by `localeLayoutInvariants.test.ts`. Do not remove the guard as "dead code."
+- **The canvas wrapper is pinned `dir="ltr"`**: `src/App.tsx` sets `dir="ltr"` on the div holding `StageCanvas`. The UI mirrors for Pashto/Persian, but the design surface must not — mirroring it would flip slide coordinates and pano seams under the user while the exported PNGs stayed identical. Do not "fix" the inconsistency by removing it.
+- **The control CSS lives inside `@layer base`**: the native-widget rules in `src/index.css` are wrapped in `@layer base` so Tailwind utilities still win. Unlayered CSS beats every layered rule in the cascade, so moving those rules out of the layer would override `border`, `bg-*`, `w-*` and `px-*` classes on every button and input in the app.
+- **The `android/` and `src-tauri/icons/` directories are generated, not missing**: CI creates them with `npx cap add android` and `tauri icon`. Do not commit them.
 - **`LegacyLocaleLayoutFields` must not be deleted**: `migrateProjectToLocaleAdjust` in `helpers.ts` reads old projects' `localeLayoutOverrides`/`localeBaseDelta` fields through the internal-only `LegacyLocaleLayoutFields` type (via `getLegacyLocaleLayoutFields()`), even though those fields were removed from `BaseLayer` itself. This is the only way old project files on disk still migrate correctly. Deleting it as "dead code referencing deleted fields" silently destroys every legacy project's locale layout on load.
 
 ---

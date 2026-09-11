@@ -41,6 +41,8 @@ import { getCanvasFormat, getFormatCanvasDims, getFormatLabel, getProjectActiveF
 import type { CanvasFormatId } from '@/types'
 import { getLayerBBox, getUnionBBox, computeAlignPatch, type AlignAxis } from '@/utils/alignLayers'
 import { getLanguageName } from '@/utils/locale'
+import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 // ─── Alignment Section ────────────────────────────────────────────────────────
 
@@ -63,6 +65,7 @@ function AlignmentSection({
   slideHeight: number
   slideOffsetX: number
 }) {
+  const t = useT()
   const { updateLayer, selectedLayerIds, project, activeSlideGroupId, editingGroupId } = useEditorStore(
     useShallow((s) => ({
       updateLayer: s.updateLayer,
@@ -134,7 +137,7 @@ function AlignmentSection({
   return (
     <div className={panelSectionCls}>
       <label className={labelCls}>
-        {isMulti ? `Align selection (${selectedLayerIds.length})` : 'Align to slide'}
+        {isMulti ? `${t('props.alignToSlide')} (${selectedLayerIds.length})` : t('props.alignToSlide')}
       </label>
       <div className="grid grid-cols-6 gap-1">
         {(['left', 'center-h', 'right', 'top', 'center-v', 'bottom'] as AlignAxis[]).map((axis) => (
@@ -159,6 +162,7 @@ function AlignmentSection({
 // ─── Layout Tab ───────────────────────────────────────────────────────────────
 
 function LayoutTab({ layer }: { layer: Layer }) {
+  const t = useT()
   const { updateLayer, project, activeSlideGroupId, activeCanvasFormat, editingGroupId, setLayerFormatVisibility } = useEditorStore(
     useShallow((s) => ({
       updateLayer: s.updateLayer,
@@ -216,7 +220,7 @@ function LayoutTab({ layer }: { layer: Layer }) {
       <div className={panelSectionCls}>
         <div className="flex items-start gap-2">
           <div className="flex-1 min-w-0">
-            <label className={labelCls}>Name</label>
+            <label className={labelCls}>{t('props.name')}</label>
             <input
               type="text"
               value={layer.name}
@@ -228,7 +232,7 @@ function LayoutTab({ layer }: { layer: Layer }) {
             <div className="flex gap-1 pt-[18px]">
               <button
                 type="button"
-                title={layer.visible ? 'Hide layer' : 'Show layer'}
+                title={layer.visible ? t('props.hideLayer') : t('props.showLayer')}
                 onClick={() => upd({ visible: !layer.visible })}
                 className={`h-[30px] w-[30px] flex items-center justify-center rounded border text-sm transition-colors ${
                   layer.visible
@@ -236,11 +240,11 @@ function LayoutTab({ layer }: { layer: Layer }) {
                     : 'border-[rgba(255,255,255,0.06)] text-[#3a3a4a]'
                 } hover:border-[rgba(255,255,255,0.22)]`}
               >
-                {layer.visible ? '●' : '○'}
+                <Icon name={layer.visible ? 'eye' : 'eye-off'} size={14} />
               </button>
               <button
                 type="button"
-                title={layer.locked ? 'Unlock layer' : 'Lock layer'}
+                title={layer.locked ? t('props.unlockLayer') : t('props.lockLayer')}
                 onClick={() => upd({ locked: !layer.locked })}
                 className={`h-[30px] w-[30px] flex items-center justify-center rounded border text-xs transition-colors ${
                   layer.locked
@@ -248,7 +252,7 @@ function LayoutTab({ layer }: { layer: Layer }) {
                     : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a]'
                 } hover:border-[rgba(255,255,255,0.22)]`}
               >
-                {layer.locked ? '⚿' : '⚷'}
+                <Icon name={layer.locked ? 'lock' : 'unlock'} size={13} />
               </button>
             </div>
           )}
@@ -258,7 +262,7 @@ function LayoutTab({ layer }: { layer: Layer }) {
       {/* Platform visibility — only shown when multiple formats are active and layer is not format-owned */}
       {!isBackground && activeFormats.length > 1 && !rawLayer?.ownerFormat && (
         <div className={panelSectionCls}>
-          <label className={labelCls}>Visible in</label>
+          <label className={labelCls}>{t('props.visibleIn')}</label>
           <div className="flex flex-wrap gap-1.5">
             {activeFormats.map((fmtId) => {
               const vis = rawLayer?.formatVisibility?.[fmtId]
@@ -288,20 +292,20 @@ function LayoutTab({ layer }: { layer: Layer }) {
       <div className={panelSectionCls}>
         {!isBackground && (
           <>
-            <SliderField label="X" value={layer.x} min={xMin} max={xMax} unit="px" onChange={(v) => upd({ x: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="x" />} />
-            <SliderField label="Y" value={layer.y} min={yMin} max={yMax} unit="px" onChange={(v) => upd({ y: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="y" />} />
+            <SliderField label={t('props.x')} value={layer.x} min={xMin} max={xMax} unit="px" onChange={(v) => upd({ x: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="x" />} />
+            <SliderField label={t('props.y')} value={layer.y} min={yMin} max={yMax} unit="px" onChange={(v) => upd({ y: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="y" />} />
             {sizeLayer && (
               <>
-                <SliderField label="W" value={(sizeLayer as ImageLayer | ShapeLayer).width} min={1} max={canvasW} unit="px" onChange={(v) => upd({ width: v } as Partial<Layer>)} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="width" />} />
-                <SliderField label="H" value={(sizeLayer as ImageLayer | ShapeLayer).height} min={1} max={canvasH} unit="px" onChange={(v) => upd({ height: v } as Partial<Layer>)} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="height" />} />
+                <SliderField label={t('props.width')} value={(sizeLayer as ImageLayer | ShapeLayer).width} min={1} max={canvasW} unit="px" onChange={(v) => upd({ width: v } as Partial<Layer>)} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="width" />} />
+                <SliderField label={t('props.height')} value={(sizeLayer as ImageLayer | ShapeLayer).height} min={1} max={canvasH} unit="px" onChange={(v) => upd({ height: v } as Partial<Layer>)} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="height" />} />
               </>
             )}
             {layer.type === 'text' && (
               <>
-                <SliderField label="W" value={Math.round((layer as TextLayer).width ?? DEFAULT_TEXT_WIDTH)} min={40} max={canvasW} unit="px" onChange={(v) => upd({ width: v } as Partial<Layer>)} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="width" />} />
+                <SliderField label={t('props.width')} value={Math.round((layer as TextLayer).width ?? DEFAULT_TEXT_WIDTH)} min={40} max={canvasW} unit="px" onChange={(v) => upd({ width: v } as Partial<Layer>)} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="width" />} />
                 <div className="mb-3">
                   <div className="flex items-center justify-between">
-                    <label className={labelCls + ' !mb-0'}>H</label>
+                    <label className={labelCls + ' !mb-0'}>{t('props.height')}</label>
                     <button
                       type="button"
                       title={(layer as TextLayer).height != null ? 'Switch to automatic height (box grows with content)' : 'Box height is automatic'}
@@ -312,7 +316,10 @@ function LayoutTab({ layer }: { layer: Layer }) {
                           : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:text-[#e8e8f0]'
                       }`}
                     >
-                      {(layer as TextLayer).height == null ? '✓ Auto' : 'Auto'}
+                      <span className="flex items-center gap-1">
+                        {(layer as TextLayer).height == null && <Icon name="check" size={10} strokeWidth={2.4} />}
+                        {t('props.auto')}
+                      </span>
                     </button>
                   </div>
                   {(layer as TextLayer).height != null && (
@@ -321,10 +328,10 @@ function LayoutTab({ layer }: { layer: Layer }) {
                 </div>
               </>
             )}
-            <SliderField label="Rotation" value={layer.rotation} min={-180} max={180} unit="°" onChange={(v) => upd({ rotation: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="rotation" />} />
+            <SliderField label={t('props.rotation')} value={layer.rotation} min={-180} max={180} unit="°" onChange={(v) => upd({ rotation: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} labelAddon={<OverrideDot layerId={layer.id} propKey="rotation" />} />
           </>
         )}
-        <SliderField label="Opacity" value={Math.round(layer.opacity * 100)} min={0} max={100} unit="%" onChange={(v) => upd({ opacity: v / 100 })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} className="!mb-0" />
+        <SliderField label={t('props.opacity')} value={Math.round(layer.opacity * 100)} min={0} max={100} unit="%" onChange={(v) => upd({ opacity: v / 100 })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} className="!mb-0" />
       </div>
 
       {/* Alignment — all non-background layers */}
@@ -417,6 +424,7 @@ function ContentTab({ layer }: { layer: Layer }) {
 // ─── PropertiesPanel shell ────────────────────────────────────────────────────
 
 export function PropertiesPanel() {
+  const t = useT()
   const {
     project,
     activeSlideGroupId,
@@ -538,7 +546,7 @@ export function PropertiesPanel() {
     <aside data-properties-panel className="h-full w-64 shrink-0 flex flex-col overflow-hidden min-[1440px]:w-72" style={{ background: '#18181f', borderLeft: `1px solid ${borderColor}` }}>
       <div className="shrink-0 border-b px-3 py-2" style={{ borderColor }}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#6b6b7a]">Properties</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#6b6b7a]">{t('props.title')}</span>
           {selectedLayer && (
             <div className="flex gap-1">
               <button
@@ -547,7 +555,7 @@ export function PropertiesPanel() {
                 onClick={() => copyLayerStyle(selectedLayer!.id)}
                 className="text-[10px] px-2 py-1 rounded border border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:text-[#e8e8f0] hover:border-[rgba(255,255,255,0.2)] transition-colors"
               >
-                Copy Style
+                {t('props.copyStyle')}
               </button>
               {styleClipboard && (
                 <button
@@ -577,9 +585,9 @@ export function PropertiesPanel() {
         {selectedLayer && !isBackgroundSelected && (
           <div className="mt-3 flex gap-4 border-b border-[rgba(255,255,255,0.06)]">
             {([
-              ['layout', 'Layout'],
-              ['style', 'Style'],
-              ['content', 'Content'],
+              ['layout', t('props.tabLayout')],
+              ['style', t('props.tabStyle')],
+              ['content', t('props.tabContent')],
             ] as const).map(([value, label]) => (
               <button
                 key={value}
@@ -600,8 +608,9 @@ export function PropertiesPanel() {
         ) : (
           <>
             {editingGroupId && selection?.layerId && (
-              <div className="mb-4 rounded-xl border border-[rgba(124,110,246,0.3)] bg-[rgba(124,110,246,0.14)] px-3 py-2 text-xs text-[#c4b5fd]">
-                ✦ Editing inside group
+              <div className="mb-4 flex items-center gap-2 rounded-xl border border-[rgba(124,110,246,0.3)] bg-[rgba(124,110,246,0.14)] px-3 py-2 text-xs text-[#c4b5fd]">
+                <Icon name="group" size={13} />
+                {t('props.editingInsideGroup')}
               </div>
             )}
 

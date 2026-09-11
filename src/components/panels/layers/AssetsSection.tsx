@@ -6,6 +6,8 @@ import { useAssetStore } from '@/store/assets'
 import { fileToDataUrl } from '@/utils/files'
 import type { AssetEntry } from '@/store/assets'
 import type { Layer } from '@/types'
+import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 interface AssetsSectionProps {
   /** Forwarded ref so the parent's insert toolbar can trigger image import */
@@ -83,6 +85,7 @@ function Chevron({ open }: { open: boolean }) {
 // ─── Main component ──────────────────────────────────────────────────────────
 
 export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLayer }: AssetsSectionProps) {
+  const t = useT()
   const { addAsset, removeAsset, loadFolder, loadFiles, assets } = useAssetStore(
     useShallow((s) => ({
       addAsset: s.addAsset,
@@ -329,25 +332,25 @@ export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLa
         <div className="mb-2 flex items-center justify-between gap-2">
           <button
             type="button"
-            aria-label={assetsCollapsed ? 'Show assets' : 'Minimize assets'}
+            aria-label={assetsCollapsed ? t('layers.assetsShow') : t('layers.assetsHide')}
             onClick={() => setAssetsCollapsed((value) => !value)}
             className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b6b7a] hover:text-[#e8e8f0]"
-            title={assetsCollapsed ? 'Show assets' : 'Minimize assets'}
+            title={assetsCollapsed ? t('layers.assetsShow') : t('layers.assetsHide')}
           >
-            <span className="tracking-normal">{assetsCollapsed ? '▸' : '▾'}</span>
-            Assets
+            <Icon name={assetsCollapsed ? 'chevron-right' : 'chevron-down'} size={12} />
+            {t('layers.assets')}
           </button>
           <div className="flex items-center gap-1">
             <span className="rounded-full bg-[rgba(124,110,246,0.16)] px-2 py-0.5 text-[10px] text-[#a89cf6]">{assetCount}</span>
             <button
               type="button"
-              aria-label="Open large asset browser"
+              aria-label={t('layers.assetsBrowser')}
               onClick={() => setAssetsModalOpen(true)}
               disabled={assetEntries.length === 0}
               className="rounded px-1.5 py-0.5 text-[10px] text-[#8f90a3] hover:bg-[rgba(255,255,255,0.06)] hover:text-white disabled:opacity-35 disabled:cursor-not-allowed"
-              title="Open large asset browser"
+              title={t('layers.assetsBrowser')}
             >
-              ⛶
+              <Icon name="maximize" size={12} />
             </button>
           </div>
         </div>
@@ -361,7 +364,7 @@ export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLa
                 className="rounded-lg border border-[rgba(255,255,255,0.08)] px-2 py-1.5 text-[10px] text-[#b0b0c4] transition-colors hover:border-[rgba(124,110,246,0.35)] hover:bg-[rgba(124,110,246,0.12)] hover:text-[#e8e8f0]"
                 title="Import screenshot files into the asset library"
               >
-                Import Files
+                {t('layers.importFiles')}
               </button>
               <button
                 type="button"
@@ -370,7 +373,7 @@ export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLa
                 className="rounded-lg border border-[rgba(255,255,255,0.08)] px-2 py-1.5 text-[10px] text-[#b0b0c4] transition-colors hover:border-[rgba(124,110,246,0.35)] hover:bg-[rgba(124,110,246,0.12)] hover:text-[#e8e8f0]"
                 title="Import a screenshots folder when the browser supports it; falls back to file import"
               >
-                Import Folder
+                {t('layers.importFolder')}
               </button>
             </div>
             <input ref={screenshotsInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleScreenshotFiles} />
@@ -383,7 +386,7 @@ export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLa
               </div>
             ) : (
               <p className="mt-3 rounded-lg border border-dashed border-[rgba(255,255,255,0.08)] px-2 py-3 text-center text-[10px] leading-4 text-[#6b6b7a]">
-                Imported screenshots will appear here.
+                {t('layers.assetsEmpty')}
               </p>
             )}
           </>

@@ -1,16 +1,18 @@
 import type { Layer } from '@/types'
+import type { IconName } from '@/components/ui/Icon'
 
 export type LayerTypeKey = Layer['type']
 
-export const LAYER_ICON: Record<LayerTypeKey, string> = {
-  background: '🎨',
-  phone: '📱',
-  text: 'T',
-  image: '🖼',
-  shape: '▭',
-  emoji: '😀',
-  brand: '🏷',
-  group: '▥',
+/** Icon shown next to each layer type in the layers panel and group inspector. */
+export const LAYER_ICON: Record<LayerTypeKey, IconName> = {
+  background: 'palette',
+  phone: 'phone',
+  text: 'text',
+  image: 'image',
+  shape: 'shape',
+  emoji: 'emoji',
+  brand: 'brand',
+  group: 'group',
 }
 
 export interface ContextMenu { layerId: string; x: number; y: number }

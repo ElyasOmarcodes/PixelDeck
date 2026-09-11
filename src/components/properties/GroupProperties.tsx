@@ -1,17 +1,10 @@
 import { useEditorStore } from '@/store'
 import type { GroupLayer, Layer } from '@/types'
 import { labelCls, panelSectionCls, pauseTemporal, resumeTemporal } from '@/components/properties/panelConstants'
+import { Icon } from '@/components/ui/Icon'
+import { LAYER_ICON } from '@/components/panels/layers/constants'
 
-const LAYER_TYPE_ICON: Record<string, string> = {
-  text: 'T',
-  phone: '📱',
-  image: '🖼',
-  shape: '■',
-  emoji: '😀',
-  brand: '★',
-  group: '▣',
-  background: '▧',
-}
+
 
 export function GroupProperties({ layer }: { layer: GroupLayer }) {
   const updateLayer = useEditorStore((s) => s.updateLayer)
@@ -47,8 +40,8 @@ export function GroupProperties({ layer }: { layer: GroupLayer }) {
                 key={child.id}
                 className="flex items-center gap-2 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[#101017] px-2 py-1.5"
               >
-                <span className="text-xs text-[#6b6b7a] w-4 text-center shrink-0">
-                  {LAYER_TYPE_ICON[child.type] ?? '?'}
+                <span className="flex w-4 justify-center text-[#8a86a0] shrink-0">
+                  <Icon name={LAYER_ICON[child.type] ?? 'shape'} size={13} />
                 </span>
                 <span className="text-xs text-[#a0a0b0] flex-1 truncate">{child.name}</span>
                 <span className="text-[10px] text-[#4a4a5a] shrink-0 uppercase tracking-wide">{child.type}</span>

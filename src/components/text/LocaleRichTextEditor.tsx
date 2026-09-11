@@ -211,7 +211,7 @@ function ActiveLocaleEditor({
         tabIndex={0}
         className="min-h-[24px] w-full whitespace-pre-wrap break-words border-0 bg-transparent text-sm leading-6 text-[#f3f2ff] outline-none"
       />
-      <div className="mt-1 text-[9px] text-[#6b6b7a]">Select text → style with the toolbar · Enter to confirm</div>
+      <div className="mt-1 text-[9px] text-[#6b6b7a]">Select text, then style it with the toolbar · Enter to confirm</div>
     </div>
   )
 }

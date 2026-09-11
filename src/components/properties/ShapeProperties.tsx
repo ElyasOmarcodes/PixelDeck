@@ -3,47 +3,50 @@ import type { ShapeLayer, Layer } from '@/types'
 import { SliderField } from '@/components/properties/PropertyControls'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { labelCls, panelSectionCls, pauseTemporal, resumeTemporal } from '@/components/properties/panelConstants'
+import { Icon, type IconName } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 // Shapes that look best starting square
 const SQUARE_SHAPES = new Set<ShapeLayer['shapeType']>(['triangle', 'diamond', 'star', 'pentagon', 'hexagon', 'cross', 'check'])
 
-const SHAPE_OPTIONS: { type: ShapeLayer['shapeType']; label: string; icon: string }[] = [
-  { type: 'rect',     label: 'Rect',     icon: '▭' },
-  { type: 'ellipse',  label: 'Ellipse',  icon: '⬭' },
-  { type: 'triangle', label: 'Triangle', icon: '△' },
-  { type: 'diamond',  label: 'Diamond',  icon: '◇' },
-  { type: 'star',     label: 'Star',     icon: '☆' },
-  { type: 'pentagon', label: 'Pentagon', icon: '⬠' },
-  { type: 'hexagon',  label: 'Hexagon',  icon: '⬡' },
-  { type: 'arrow',    label: 'Arrow',    icon: '→' },
-  { type: 'cross',    label: 'Cross',    icon: '+' },
-  { type: 'check',    label: 'Check',    icon: '✓' },
+const SHAPE_OPTIONS: { type: ShapeLayer['shapeType']; label: string; icon: IconName }[] = [
+  { type: 'rect',     label: 'Rect',     icon: 'shape-rect' },
+  { type: 'ellipse',  label: 'Ellipse',  icon: 'shape-ellipse' },
+  { type: 'triangle', label: 'Triangle', icon: 'shape-triangle' },
+  { type: 'diamond',  label: 'Diamond',  icon: 'shape-diamond' },
+  { type: 'star',     label: 'Star',     icon: 'shape-star' },
+  { type: 'pentagon', label: 'Pentagon', icon: 'shape-pentagon' },
+  { type: 'hexagon',  label: 'Hexagon',  icon: 'shape-hexagon' },
+  { type: 'arrow',    label: 'Arrow',    icon: 'arrow-right' },
+  { type: 'cross',    label: 'Cross',    icon: 'plus' },
+  { type: 'check',    label: 'Check',    icon: 'check' },
 ]
 
-const ARROW_DIRECTIONS: { dir: NonNullable<ShapeLayer['arrowDirection']>; label: string }[] = [
-  { dir: 'right', label: '→' },
-  { dir: 'up',    label: '↑' },
-  { dir: 'down',  label: '↓' },
-  { dir: 'left',  label: '←' },
+const ARROW_DIRECTIONS: { dir: NonNullable<ShapeLayer['arrowDirection']>; label: string; icon: IconName }[] = [
+  { dir: 'right', label: 'Right', icon: 'arrow-right' },
+  { dir: 'up',    label: 'Up',    icon: 'arrow-up' },
+  { dir: 'down',  label: 'Down',  icon: 'arrow-down' },
+  { dir: 'left',  label: 'Left',  icon: 'arrow-left' },
 ]
 
 export function ShapeProperties({ layer }: { layer: ShapeLayer }) {
+  const t = useT()
   const updateLayer = useEditorStore((s) => s.updateLayer)
   const upd = (patch: Partial<ShapeLayer>) => updateLayer(layer.id, patch as Partial<Layer>)
 
   return (
     <div className="space-y-4">
       <div className={panelSectionCls}>
-        <label className={labelCls}>Shape Type</label>
+        <label className={labelCls}>{t('shape.type')}</label>
         <SegmentedControl
           value={layer.shapeType}
           options={SHAPE_OPTIONS.map(({ type, label, icon }) => ({
             value: type,
             label: (
-              <>
-                <span className="text-base leading-none">{icon}</span>
+              <span className="flex flex-col items-center gap-1">
+                <Icon name={icon} size={16} />
                 <span>{label}</span>
-              </>
+              </span>
             ),
           }))}
           onChange={(type) => {
@@ -102,13 +105,17 @@ export function ShapeProperties({ layer }: { layer: ShapeLayer }) {
 
       {layer.shapeType === 'arrow' && (
         <div className={panelSectionCls}>
-          <label className={labelCls}>Direction</label>
+          <label className={labelCls}>{t('shape.direction')}</label>
           <SegmentedControl
             value={layer.arrowDirection ?? 'right'}
-            options={ARROW_DIRECTIONS.map(({ dir, label }) => ({ value: dir, label }))}
+            options={ARROW_DIRECTIONS.map(({ dir, label, icon }) => ({
+              value: dir,
+              title: label,
+              label: <span className="flex justify-center"><Icon name={icon} size={15} /></span>,
+            }))}
             onChange={(dir) => upd({ arrowDirection: dir })}
             className="grid grid-cols-4 gap-2"
-            optionClassName="rounded-lg border py-2 text-base transition-colors"
+            optionClassName="rounded-lg border py-2 transition-colors"
           />
         </div>
       )}

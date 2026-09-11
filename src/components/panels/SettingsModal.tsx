@@ -6,6 +6,8 @@ import { BrandColorList } from '@/components/common/BrandColorList'
 import { ModalShell } from '@/components/ui/ModalShell'
 import { NumberInput } from '@/components/ui/NumberInput'
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch'
+import { Icon, type IconName } from '@/components/ui/Icon'
+import { UI_LANGUAGES, useT, useUiLanguageStore, type TranslationKey } from '@/i18n'
 
 interface SettingsModalProps {
   open: boolean
@@ -18,20 +20,79 @@ const labelCls = 'text-[11px] text-[#6b6b7a] mb-1 block uppercase tracking-[0.08
 
 // ─── Tab definitions ─────────────────────────────────────────────────────────
 
-type Tab = 'ai' | 'brand' | 'pano'
+type Tab = 'ai' | 'language' | 'brand' | 'pano'
 
 interface TabMeta {
   id: Tab
-  label: string
-  icon: string
+  labelKey: TranslationKey
+  icon: IconName
   section: 'GLOBAL' | 'PROJECT'
 }
 
 const TABS: TabMeta[] = [
-  { id: 'ai', label: 'AI', icon: '🤖', section: 'GLOBAL' },
-  { id: 'brand', label: 'Brand', icon: '🎨', section: 'PROJECT' },
-  { id: 'pano', label: 'Pano', icon: '🖼', section: 'PROJECT' },
+  { id: 'ai', labelKey: 'settings.ai', icon: 'ai', section: 'GLOBAL' },
+  { id: 'language', labelKey: 'settings.language', icon: 'languages', section: 'GLOBAL' },
+  { id: 'brand', labelKey: 'settings.brand', icon: 'palette', section: 'PROJECT' },
+  { id: 'pano', labelKey: 'settings.pano', icon: 'image', section: 'PROJECT' },
 ]
+
+// ─── Language tab content ─────────────────────────────────────────────────────
+
+function LanguageSettingsContent() {
+  const t = useT()
+  const language = useUiLanguageStore((s) => s.language)
+  const setLanguage = useUiLanguageStore((s) => s.setLanguage)
+
+  return (
+    <div>
+      <h3 className="text-sm font-semibold text-[#e8e8f0] mb-1">{t('settings.languageTitle')}</h3>
+      <p className="text-[12px] text-[#6b6b7a] mb-5 leading-relaxed">{t('settings.languageHint')}</p>
+
+      <div className="space-y-2">
+        {UI_LANGUAGES.map((lang) => {
+          const selected = lang.code === language
+          return (
+            <button
+              key={lang.code}
+              type="button"
+              onClick={() => setLanguage(lang.code)}
+              aria-pressed={selected}
+              className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-start transition-colors ${
+                selected
+                  ? 'border-[#7c6ef6] bg-[rgba(124,110,246,0.14)]'
+                  : 'border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.18)] hover:bg-[rgba(255,255,255,0.04)]'
+              }`}
+            >
+              <span
+                className="w-6 shrink-0 text-[#7c6ef6]"
+                aria-hidden="true"
+              >
+                {selected ? <Icon name="check" size={15} strokeWidth={2.4} /> : null}
+              </span>
+              <span className="min-w-0 flex-1">
+                {/* Native name leads: someone looking for Pashto scans for پښتو,
+                    not for the English word. */}
+                <span
+                  dir={lang.dir}
+                  className="block text-sm text-[#e8e8f0]"
+                  style={{ fontFamily: lang.dir === 'rtl' ? 'Vazirmatn, Inter, system-ui, sans-serif' : undefined }}
+                >
+                  {lang.nativeLabel}
+                </span>
+                <span className="block text-[11px] text-[#6b6b7a]">{lang.label}</span>
+              </span>
+              <span className="shrink-0 rounded-full border border-[rgba(255,255,255,0.1)] px-2 py-0.5 font-mono text-[10px] uppercase text-[#6b6b7a]">
+                {lang.dir}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      <p className="mt-5 text-[11px] leading-relaxed text-[#575766]">{t('settings.languageRtlNote')}</p>
+    </div>
+  )
+}
 
 // ─── Brand tab content ────────────────────────────────────────────────────────
 
@@ -143,6 +204,7 @@ function PanoSettingsContent() {
 
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const [tab, setTab] = useState<Tab>('ai')
+  const translate = useT()
 
   const sections = ['GLOBAL', 'PROJECT'] as const
   const tabsBySection = (section: (typeof sections)[number]) =>
@@ -152,7 +214,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
     <ModalShell
       open={open}
       onClose={onClose}
-      title="Settings"
+      title={translate('settings.title')}
       closeLabel="Close settings"
       maxWidth="max-w-5xl"
       panelClassName="relative rounded-2xl border shadow-2xl w-full mx-4 h-[85vh] flex flex-col overflow-hidden"
@@ -177,21 +239,21 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             {sections.map((section) => (
               <div key={section}>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#4a4a5a] mb-1 mt-3 first:mt-0 px-2">
-                  {section}
+                  {translate(section === 'GLOBAL' ? 'settings.global' : 'settings.project')}
                 </p>
-                {tabsBySection(section).map((t) => (
+                {tabsBySection(section).map((tabMeta) => (
                   <button
-                    key={t.id}
+                    key={tabMeta.id}
                     type="button"
-                    onClick={() => setTab(t.id)}
-                    className={`w-full text-left px-2 py-1.5 rounded-md text-xs transition-colors flex items-center gap-2 ${
-                      tab === t.id
+                    onClick={() => setTab(tabMeta.id)}
+                    className={`w-full px-2 py-1.5 rounded-md text-xs transition-colors flex items-center gap-2 text-start ${
+                      tab === tabMeta.id
                         ? 'bg-[rgba(124,110,246,0.18)] text-[#c4b5fd]'
                         : 'text-[#6b6b7a] hover:text-[#e8e8f0] hover:bg-[rgba(255,255,255,0.05)]'
                     }`}
                   >
-                    <span>{t.icon}</span>
-                    <span>{t.label}</span>
+                    <Icon name={tabMeta.icon} size={14} />
+                    <span>{translate(tabMeta.labelKey)}</span>
                   </button>
                 ))}
               </div>
@@ -210,6 +272,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                 <AiProviderSettings />
               </div>
             )}
+            {tab === 'language' && <LanguageSettingsContent />}
             {tab === 'brand' && <BrandSettingsContent />}
             {tab === 'pano' && <PanoSettingsContent />}
           </div>

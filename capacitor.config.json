@@ -1,0 +1,15 @@
+{
+  "appId": "com.pixeldeck.app",
+  "appName": "PixelDeck",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "webContentsDebuggingEnabled": false,
+    "backgroundColor": "#0f0f13",
+    "allowMixedContent": false
+  },
+  "ios": {
+    "backgroundColor": "#0f0f13",
+    "contentInset": "always"
+  }
+}

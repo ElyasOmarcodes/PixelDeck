@@ -1,5 +1,6 @@
 import { AiProviderSettings } from '@/components/ai/AiProviderSettings'
 import { ModalShell } from '@/components/ui/ModalShell'
+import { Icon } from '@/components/ui/Icon'
 
 interface ApiKeysModalProps {
   open: boolean
@@ -18,7 +19,7 @@ export function ApiKeysModal({ open, onClose }: ApiKeysModalProps) {
     >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-[#e8e8f0]">AI Settings</h2>
-          <button onClick={onClose} className="text-[#6b6b7a] hover:text-[#e8e8f0] transition-colors text-lg">✕</button>
+          <button onClick={onClose} aria-label="Close" className="text-[#6b6b7a] hover:text-[#e8e8f0] transition-colors"><Icon name="close" size={15} /></button>
         </div>
 
         <p className="text-[12px] text-[#6b6b7a] mb-4 leading-relaxed">

@@ -288,6 +288,59 @@ All panels read from and write to the Zustand store directly; no prop drilling. 
 
 ---
 
+## Interface Language (i18n)
+
+The editor chrome is translatable independently of the designs it edits.
+
+```
+src/i18n/
+├── index.ts              # UiLanguage store (localStorage) + useT() + translate()
+└── locales/
+    ├── en.ts             # source of truth — TranslationKey is derived from it
+    ├── ps.ts             # Pashto  (RTL)
+    └── fa.ts             # Persian / Dari (RTL)
+```
+
+- `en.ts` types the key space, so every other locale must stay complete or the
+  build fails. `src/i18n/i18n.test.ts` additionally checks matching `{name}`
+  placeholders and Arabic-script coverage.
+- `initUiLanguage()` runs in `src/main.tsx` **before** React mounts and stamps
+  `lang` + `dir` on `<html>`, so an RTL interface never paints LTR first. It is
+  skipped in headless export mode: rendered PNGs must not depend on whichever
+  UI language was last picked.
+- The `StageCanvas` wrapper in `App.tsx` is pinned `dir="ltr"`. Mirroring the
+  design surface would move slide coordinates and pano seams under the user
+  while the export stayed identical.
+- This is **not** the same axis as `activeLocale` / `project.settings.locales`,
+  which localize the slides themselves and are part of the project document and
+  every export.
+
+---
+
+## Native Shells
+
+One web bundle, three distributions.
+
+```
+dist/  ──┬─→ GitHub Pages (web)
+         ├─→ src-tauri/            → Tauri v2  → .deb / .rpm / .dmg / .exe
+         └─→ capacitor.config.json → Capacitor → .apk / .aab
+```
+
+Both shells are pure webview hosts. PixelDeck is already local-first — projects
+in `localStorage`, assets in IndexedDB, PNG export through the webview's own
+download path — so `src-tauri` declares no Tauri commands and no plugins, and
+its capability set is `core:default` only. That keeps the desktop installers in
+the single-digit megabytes, since the webview comes from the OS rather than a
+bundled Chromium.
+
+Generated, not committed: `src-tauri/icons/` (from `resources/icon.png` via
+`tauri icon`), `src-tauri/target/`, `src-tauri/gen/`, and the whole `android/`
+Gradle project (from `npx cap add android`). `.github/workflows/apps.yml` builds
+all of them. Full details in `docs/native-apps.md`.
+
+---
+
 ## Conventions
 
 - **Path alias:** `@/` maps to `src/` (configured in `vite.config.ts` and `tsconfig.app.json`)

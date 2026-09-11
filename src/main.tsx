@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { loadGoogleFonts } from '@/utils/fonts'
 import { abandonBootstrap, bootstrapProjects } from '@/store/projects'
+import { initUiLanguage } from '@/i18n'
 
 declare global {
   interface Window {
@@ -14,6 +15,10 @@ declare global {
 // Load Google Fonts for the editor (not needed in headless export)
 if (!window.__EXPORT_CONFIG__) {
   loadGoogleFonts()
+  // Stamp lang/dir on <html> before the first paint so an RTL interface never
+  // flashes left-to-right. Headless export keeps the document untouched — the
+  // rendered PNGs must not depend on whatever UI language was last picked.
+  initUiLanguage()
 }
 
 // If the CLI injected __EXPORT_CONFIG__ before page load, run in headless export mode.

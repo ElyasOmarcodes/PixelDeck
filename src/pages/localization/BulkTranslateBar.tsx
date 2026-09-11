@@ -1,4 +1,6 @@
 import type { RefObject } from 'react'
+import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 export interface BulkTranslateBarProps {
   nonDefaultLocales: string[]
@@ -23,6 +25,7 @@ export function BulkTranslateBar({
   bulkCancelRef,
   onOpenAiSettings,
 }: BulkTranslateBarProps) {
+  const t = useT()
   if (nonDefaultLocales.length === 0) return null
 
   return (
@@ -58,7 +61,12 @@ export function BulkTranslateBar({
           }`}
           title={!hasApiKey ? 'Configure an AI API key in AI Settings' : undefined}
         >
-          {isBulkRunning ? '⟳ Translating…' : `✦ Translate all (${nonDefaultLocales.length} lang${nonDefaultLocales.length > 1 ? 's' : ''})`}
+          <span className="flex items-center gap-1.5">
+            <Icon name={isBulkRunning ? 'spinner' : 'sparkles'} size={12} />
+            {isBulkRunning
+              ? t('loc.translating')
+              : `${t('loc.translateAll')} (${nonDefaultLocales.length})`}
+          </span>
         </button>
 
         {!hasApiKey && (

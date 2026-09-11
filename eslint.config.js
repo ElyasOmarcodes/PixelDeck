@@ -6,7 +6,16 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // Build output only. `src-tauri/target` and `android/`, `ios/` hold generated
+  // native-shell artifacts — including Tauri's embedded asset copies, which are
+  // gzipped blobs with a .js extension and would otherwise fail to parse.
+  globalIgnores([
+    'dist',
+    'src-tauri/target',
+    'src-tauri/gen',
+    'android',
+    'ios',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

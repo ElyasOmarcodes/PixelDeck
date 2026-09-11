@@ -28,6 +28,8 @@ import { getScopedEditingIndicator } from '@/utils/scopedEditingIndicator'
 import { CreateFormatLayoutModal } from '@/components/panels/CreateFormatLayoutModal'
 import { ContentSyncModal } from '@/components/panels/ContentSyncModal'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 function useDismissOnOutsideClick(
   open: boolean,
@@ -168,6 +170,7 @@ function HorizontalScrollAffordance({
 
 /** The two editing axes share one piece of persistent editor chrome. */
 export function EditingContextBar() {
+  const t = useT()
   const {
     project,
     settings,
@@ -354,10 +357,10 @@ export function EditingContextBar() {
     const label = getFormatLabel(formatId, settings.customFormats)
     return <div key={formatId} className="group/tab flex h-full shrink-0 items-center">
       <button onClick={() => setActiveCanvasFormat(formatId)} data-tab-key={formatId} className={tabClass(isActive)} title={`${label} format · ${count} layout adjustment${count !== 1 ? 's' : ''}`}>
-        {label}{count > 0 && <span className="text-[9px] font-bold text-[#fbbf24]">●{count}</span>}
+        {label}{count > 0 && <span className="flex items-center gap-0.5 text-[9px] font-bold text-[#fbbf24]"><Icon name="dot" size={6} />{count}</span>}
       </button>
       <div className="pointer-events-none -ml-0.5 flex h-full w-4 shrink-0 items-center justify-center opacity-0 transition-opacity group-hover/tab:pointer-events-auto group-hover/tab:opacity-100">
-        <button onClick={() => setDeleteTarget(formatId)} className="flex h-4 w-4 items-center justify-center rounded text-xs text-[#6b6b7a] transition-colors hover:bg-[rgba(248,113,113,0.1)] hover:text-[#f87171]" title={`Delete ${label} layout`} aria-label={`Delete ${label} layout`}>×</button>
+        <button onClick={() => setDeleteTarget(formatId)} className="flex h-4 w-4 items-center justify-center rounded text-xs text-[#6b6b7a] transition-colors hover:bg-[rgba(248,113,113,0.1)] hover:text-[#f87171]" title={`Delete ${label} layout`} aria-label={`Delete ${label} layout`}><Icon name="close" size={10} strokeWidth={2.4} /></button>
       </div>
     </div>
   }
@@ -366,7 +369,7 @@ export function EditingContextBar() {
       <button onClick={() => setActiveCanvasFormat(formatId)} data-tab-key={formatId} className={tabClass(activeCanvasFormat === formatId)}>
         {getFormatLabel(formatId, settings.customFormats)}
       </button>
-      <button onClick={() => removeCustomFormat(formatId)} className="-ml-2 pr-1 text-xs text-[#6b6b7a] opacity-0 transition-opacity group-hover/tab:opacity-100 hover:text-[#f87171]" title="Remove format">×</button>
+      <button onClick={() => removeCustomFormat(formatId)} className="-ml-2 flex items-center pr-1 text-[#6b6b7a] opacity-0 transition-opacity group-hover/tab:opacity-100 hover:text-[#f87171]" title="Remove format" aria-label="Remove format"><Icon name="close" size={10} strokeWidth={2.4} /></button>
     </div>
   )
   const renderFormatAddButton = () => (
@@ -408,7 +411,7 @@ export function EditingContextBar() {
         <section className="flex min-w-[12rem] flex-1 items-stretch" aria-label="Canvas format">
           <div className="mr-1.5 flex shrink-0 items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#f59e0b] shadow-[0_0_7px_rgba(245,158,11,0.35)]" />
-            <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#6b6254]">Format</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#6b6254]">{t('canvas.format')}</span>
           </div>
           {hasMultipleFamilies ? (
             <HorizontalScrollAffordance>
@@ -618,7 +621,7 @@ export function EditingContextBar() {
                     title={`${label} locale · ${count} locale layout adjustment${count !== 1 ? 's' : ''}`}
                   >
                     {label}
-                    {count > 0 && <span className="text-[9px] font-bold text-[#22d3c5]">●{count}</span>}
+                    {count > 0 && <span className="flex items-center gap-0.5 text-[9px] font-bold text-[#22d3c5]"><Icon name="dot" size={6} />{count}</span>}
                   </button>
                 )
                 })}
@@ -633,7 +636,7 @@ export function EditingContextBar() {
               onClick={() => setActionsOpen((open) => !open)}
               className="rounded-md border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] text-[#c9c9d4] transition-colors hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.07)] hover:text-white"
             >
-              Actions ▾
+              <span className="flex items-center gap-1">Actions<Icon name="chevron-down" size={10} /></span>
             </button>
             {actionsOpen && (
               <div className="absolute right-0 top-full z-50 mt-1.5 w-72 overflow-hidden rounded-lg border border-[rgba(255,255,255,0.12)] bg-[#1c1c26] shadow-2xl">
@@ -763,10 +766,11 @@ export function EditingContextAlert() {
             setActiveCanvasFormat(baseFormat)
             setActiveLocale(defaultLocale)
           }}
-          className="shrink-0 rounded-md border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] text-[#c9c9d4] transition-colors hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.07)] hover:text-white"
+          className="flex shrink-0 items-center gap-1 rounded-md border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] text-[#c9c9d4] transition-colors hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.07)] hover:text-white"
           title="Return to the shared base format and default locale"
         >
-          ↩ Base + Default
+          <Icon name="corner-down-left" size={11} />
+          Base + Default
         </button>
       </div>
     </div>

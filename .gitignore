@@ -45,3 +45,18 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# ─── Native app shells ────────────────────────────────────────────────────────
+# The desktop shell's source lives in src-tauri/; everything below is generated
+# by a build and must not be committed.
+/src-tauri/target/
+/src-tauri/gen/
+/src-tauri/icons/
+/src-tauri/Cargo.lock
+
+# The Android and iOS projects are generated from capacitor.config.json by
+# `npx cap add <platform>` (see .github/workflows/apps.yml). Keeping them out of
+# the repo avoids ~2k generated Gradle/Xcode files and stops the committed
+# project drifting from the pinned Capacitor version.
+/android/
+/ios/
