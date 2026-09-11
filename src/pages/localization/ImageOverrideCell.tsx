@@ -2,6 +2,7 @@ import { effectiveLocalizationMode } from '@/utils/locale'
 import type { LocalizableRow } from './types'
 import { getFileLabel } from './helpers'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 export interface ImageOverrideCellProps {
   row: LocalizableRow
@@ -22,6 +23,7 @@ export function ImageOverrideCell({
   onUpload,
   onClear,
 }: ImageOverrideCellProps) {
+  const t = useT()
   const override = row.layer.localeContent?.[locale]
   const isDefaultLocale = locale === defaultLocale
   const isActiveColumn = locale === activeLocale
@@ -128,7 +130,7 @@ export function ImageOverrideCell({
           >
             + Upload
           </button>
-          <span className="flex items-center gap-1 text-xs text-amber-400/70"><Icon name="alert-triangle" size={11} />Missing</span>
+          <span className="flex items-center gap-1 text-xs text-amber-400/70"><Icon name="alert-triangle" size={11} />{t('loc.missing')}</span>
         </div>
       )}
     </div>

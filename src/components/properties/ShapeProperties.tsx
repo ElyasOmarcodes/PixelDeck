@@ -4,6 +4,7 @@ import { SliderField } from '@/components/properties/PropertyControls'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { labelCls, panelSectionCls, pauseTemporal, resumeTemporal } from '@/components/properties/panelConstants'
 import { Icon, type IconName } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 // Shapes that look best starting square
 const SQUARE_SHAPES = new Set<ShapeLayer['shapeType']>(['triangle', 'diamond', 'star', 'pentagon', 'hexagon', 'cross', 'check'])
@@ -29,13 +30,14 @@ const ARROW_DIRECTIONS: { dir: NonNullable<ShapeLayer['arrowDirection']>; label:
 ]
 
 export function ShapeProperties({ layer }: { layer: ShapeLayer }) {
+  const t = useT()
   const updateLayer = useEditorStore((s) => s.updateLayer)
   const upd = (patch: Partial<ShapeLayer>) => updateLayer(layer.id, patch as Partial<Layer>)
 
   return (
     <div className="space-y-4">
       <div className={panelSectionCls}>
-        <label className={labelCls}>Shape Type</label>
+        <label className={labelCls}>{t('shape.type')}</label>
         <SegmentedControl
           value={layer.shapeType}
           options={SHAPE_OPTIONS.map(({ type, label, icon }) => ({
@@ -103,7 +105,7 @@ export function ShapeProperties({ layer }: { layer: ShapeLayer }) {
 
       {layer.shapeType === 'arrow' && (
         <div className={panelSectionCls}>
-          <label className={labelCls}>Direction</label>
+          <label className={labelCls}>{t('shape.direction')}</label>
           <SegmentedControl
             value={layer.arrowDirection ?? 'right'}
             options={ARROW_DIRECTIONS.map(({ dir, label, icon }) => ({

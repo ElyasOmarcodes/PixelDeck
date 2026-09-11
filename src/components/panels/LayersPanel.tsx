@@ -16,10 +16,12 @@ import { LAYER_ICON, type ContextMenu } from './layers/constants'
 import { SortableLayer, SortableGroup, DragPreview } from './layers/SortableLayerRow'
 import { AssetsSection } from './layers/AssetsSection'
 import { LayerContextMenu } from './layers/LayerContextMenu'
+import { useT } from '@/i18n'
 
 // ─── LayersPanel ──────────────────────────────────────────────────────────────
 
 export function LayersPanel() {
+  const t = useT()
   const {
     project, activeSlideGroupId, selection, select,
     addPhone, addText, addShape, addEmoji, addChipGroup, addBrand, addImage,
@@ -281,13 +283,13 @@ export function LayersPanel() {
     else if (key === 'image') imageInputRef.current?.click()
   }
   const insertTools: { key: string; icon: IconName; label: string }[] = [
-    { key: 'phone', icon: 'phone', label: 'Devices' },
-    { key: 'text', icon: 'text', label: 'Text' },
-    { key: 'shape', icon: 'shape', label: 'Shape' },
-    { key: 'emoji', icon: 'emoji', label: 'Emoji' },
-    { key: 'chip', icon: 'chip', label: 'Chip' },
-    { key: 'brand', icon: 'brand', label: 'Brand' },
-    { key: 'image', icon: 'image', label: 'Image' },
+    { key: 'phone', icon: 'phone', label: t('layers.insertDevices') },
+    { key: 'text', icon: 'text', label: t('layers.insertText') },
+    { key: 'shape', icon: 'shape', label: t('layers.insertShape') },
+    { key: 'emoji', icon: 'emoji', label: t('layers.insertEmoji') },
+    { key: 'chip', icon: 'chip', label: t('layers.insertChip') },
+    { key: 'brand', icon: 'brand', label: t('layers.insertBrand') },
+    { key: 'image', icon: 'image', label: t('layers.insertImage') },
   ]
 
   return (
@@ -298,13 +300,13 @@ export function LayersPanel() {
       {/* Insert toolbar */}
       <div className="px-3 pt-3 pb-2 shrink-0 border-b" style={{ borderColor }}>
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b6b7a]">Insert</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b6b7a]">{t('layers.insert')}</span>
         </div>
 
         {selectedLayerIds.length > 0 && (
           <div className="mb-2 flex items-center justify-between rounded-md bg-[rgba(124,110,246,0.12)] border border-[rgba(124,110,246,0.3)] px-2 py-1">
-            <span className="text-[10px] text-[#a89cf6]">{selectedLayerIds.length} selected</span>
-            <button onClick={() => clearMultiSelection()} className="text-[10px] text-[#a89cf6] hover:text-[#e8e8f0] transition-colors">Clear</button>
+            <span className="text-[10px] text-[#a89cf6]">{t('layers.selected', { count: selectedLayerIds.length })}</span>
+            <button onClick={() => clearMultiSelection()} className="text-[10px] text-[#a89cf6] hover:text-[#e8e8f0] transition-colors">{t('layers.clearSelection')}</button>
           </div>
         )}
 
@@ -334,14 +336,14 @@ export function LayersPanel() {
 
         <div className="mt-3 h-px w-full bg-[rgba(255,255,255,0.06)]" />
         <div className="pt-2">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b6b7a]">Layers</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b6b7a]">{t('layers.title')}</span>
         </div>
       </div>
 
       {/* Layer list */}
       <div className="flex-1 overflow-y-auto">
         {layers.length === 0 && (
-          <p className="text-xs text-[#6b6b7a] px-3 py-4 text-center">No layers yet</p>
+          <p className="text-xs text-[#6b6b7a] px-3 py-4 text-center">{t('layers.empty')}</p>
         )}
 
         <DndContext

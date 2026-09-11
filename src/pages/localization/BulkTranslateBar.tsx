@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 export interface BulkTranslateBarProps {
   nonDefaultLocales: string[]
@@ -24,6 +25,7 @@ export function BulkTranslateBar({
   bulkCancelRef,
   onOpenAiSettings,
 }: BulkTranslateBarProps) {
+  const t = useT()
   if (nonDefaultLocales.length === 0) return null
 
   return (
@@ -62,8 +64,8 @@ export function BulkTranslateBar({
           <span className="flex items-center gap-1.5">
             <Icon name={isBulkRunning ? 'spinner' : 'sparkles'} size={12} />
             {isBulkRunning
-              ? 'Translating…'
-              : `Translate all (${nonDefaultLocales.length} lang${nonDefaultLocales.length > 1 ? 's' : ''})`}
+              ? t('loc.translating')
+              : `${t('loc.translateAll')} (${nonDefaultLocales.length})`}
           </span>
         </button>
 

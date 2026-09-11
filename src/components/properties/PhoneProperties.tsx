@@ -11,6 +11,7 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { FileUploadButton } from '@/components/ui/FileUploadButton'
 import { computePhoneFitScale, PHONE_MODELS, getPhoneSpec } from '@/assets/mockups/specs'
 import { Icon, type IconName } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 import {
   inputCls,
   labelCls,
@@ -83,6 +84,7 @@ function LocaleScreenshotRow({
 // ─── PhoneProperties ──────────────────────────────────────────────────────────
 
 export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
+  const t = useT()
   const { updateLayer, project, activeSlideGroupId, setLocaleContent, clearLocaleContent } = useEditorStore(
     useShallow((s) => ({
       updateLayer: s.updateLayer,
@@ -118,7 +120,7 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
     <div className="space-y-4">
       <div className={panelSectionCls}>
         <div className="flex items-center mb-1">
-          <label className={labelCls + ' !mb-0'}>Phone Model</label>
+          <label className={labelCls + ' !mb-0'}>{t('phone.model')}</label>
           <OverrideDot layerId={layer.id} propKey="model" />
         </div>
         <select
@@ -155,16 +157,16 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
         const cx = (slideWidth - fw) / 2
 
         const presets: { label: string; icon?: IconName; patch: Partial<PhoneLayer> }[] = [
-          { label: 'Center',   patch: { x: cx, y: (slideHeight - fh) / 2, rotation: 0 } },
-          { label: 'Hero',     patch: { x: cx, y: Math.round(slideHeight * 0.05), rotation: 0 } },
-          { label: 'Bleed',    patch: { x: cx, y: Math.round(slideHeight * 0.38), rotation: 0 } },
-          { label: 'Tilt L',   icon: 'rotate-ccw', patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: -10 } },
-          { label: 'Tilt R',   icon: 'rotate-cw',  patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: 10 } },
+          { label: t('phone.presetCenter'),    patch: { x: cx, y: (slideHeight - fh) / 2, rotation: 0 } },
+          { label: t('phone.presetHero'),      patch: { x: cx, y: Math.round(slideHeight * 0.05), rotation: 0 } },
+          { label: t('phone.presetBleed'),     patch: { x: cx, y: Math.round(slideHeight * 0.38), rotation: 0 } },
+          { label: t('phone.presetTiltLeft'),  icon: 'rotate-ccw', patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: -10 } },
+          { label: t('phone.presetTiltRight'), icon: 'rotate-cw',  patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: 10 } },
         ]
 
         return (
           <div className={panelSectionCls}>
-            <label className={labelCls}>Composition</label>
+            <label className={labelCls}>{t('phone.composition')}</label>
             <div className="grid grid-cols-5 gap-1">
               {presets.map((preset) => (
                 <button
@@ -186,7 +188,7 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
         <div className={panelSectionCls}>
           {/* Status bar toggle */}
           <div className="mb-3 flex items-center justify-between">
-            <label className={labelCls + ' !mb-0'}>Status Bar</label>
+            <label className={labelCls + ' !mb-0'}>{t('phone.statusBar')}</label>
             <ToggleSwitch
               checked={layer.showStatusBar ?? true}
               onChange={(checked) => upd({ showStatusBar: checked })}
@@ -198,12 +200,12 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
             <div className="space-y-3">
               {/* Background type */}
               <div>
-                <label className={labelCls}>Background</label>
+                <label className={labelCls}>{t('phone.background')}</label>
                 <SegmentedControl
                   value={layer.statusBarBg ?? 'transparent'}
                   options={[
-                    { value: 'transparent', label: 'Transparent' },
-                    { value: 'solid', label: 'Solid' },
+                    { value: 'transparent', label: t('phone.transparent') },
+                    { value: 'solid', label: t('phone.solid') },
                   ]}
                   onChange={(b) => upd({ statusBarBg: b })}
                   className="grid grid-cols-2 gap-2"
@@ -226,12 +228,12 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
 
               {/* Icon theme */}
               <div>
-                <label className={labelCls}>Icons</label>
+                <label className={labelCls}>{t('phone.icons')}</label>
                 <SegmentedControl
                   value={layer.statusBarTheme ?? 'dark'}
                   options={[
-                    { value: 'dark', label: <span className="flex items-center justify-center gap-1.5"><Icon name="moon" size={13} />Dark</span> },
-                    { value: 'light', label: <span className="flex items-center justify-center gap-1.5"><Icon name="sun" size={13} />Light</span> },
+                    { value: 'dark', label: <span className="flex items-center justify-center gap-1.5"><Icon name="moon" size={13} />{t('phone.themeDark')}</span> },
+                    { value: 'light', label: <span className="flex items-center justify-center gap-1.5"><Icon name="sun" size={13} />{t('phone.themeLight')}</span> },
                   ]}
                   onChange={(t) => upd({ statusBarTheme: t })}
                   className="grid grid-cols-2 gap-2"
@@ -245,14 +247,14 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
 
       <div className={panelSectionCls}>
         <div className="mb-1 flex items-center justify-between">
-          <label className={labelCls + ' !mb-0'}>Scale</label>
+          <label className={labelCls + ' !mb-0'}>{t('phone.scale')}</label>
           <span className="text-xs text-[#e8e8f0]">{layer.scale.toFixed(2)}×</span>
         </div>
         <input type="range" min={0.5} max={4} step={0.05} value={layer.scale} onChange={(e) => upd({ scale: Number(e.target.value) })} onMouseDown={pauseTemporal} onMouseUp={resumeTemporal} className="w-full accent-[#7c6ef6]" />
       </div>
 
       <div className={panelSectionCls}>
-        <label className={labelCls}>Screenshot</label>
+        <label className={labelCls}>{t('phone.screenshot')}</label>
         <FileUploadButton
           ref={screenshotInputRef}
           variant="dropzone"
@@ -265,19 +267,20 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
             await handleScreenshotFile(file)
           }}
         >
-          {previewSrc ? <img src={previewSrc} alt="Screenshot" className="mx-auto max-h-24 rounded-lg object-contain" /> : <span className="text-xs text-[#6b6b7a]">Click or drag to upload screenshot</span>}
+          {previewSrc ? <img src={previewSrc} alt="Screenshot" className="mx-auto max-h-24 rounded-lg object-contain" /> : <span className="text-xs text-[#6b6b7a]">{t('phone.screenshotDropzone')}</span>}
         </FileUploadButton>
         {screenshotLabel && <p className="mt-2 truncate text-[10px] text-[#6b6b7a]">{screenshotLabel}</p>}
       </div>
 
       <div className={panelSectionCls}>
-        <label className={labelCls}>Fit</label>
+        <label className={labelCls}>{t('phone.fit')}</label>
         <SegmentedControl
           value={layer.screenshotFit}
-          options={(['cover', 'contain', 'fill'] as const).map((fit) => ({
-            value: fit,
-            label: fit.charAt(0).toUpperCase() + fit.slice(1),
-          }))}
+          options={([
+            ['cover', t('phone.fitCover')],
+            ['contain', t('phone.fitContain')],
+            ['fill', t('phone.fitFill')],
+          ] as const).map(([fit, label]) => ({ value: fit, label }))}
           onChange={(fit) => upd({ screenshotFit: fit })}
         />
       </div>

@@ -29,6 +29,7 @@ import { CreateFormatLayoutModal } from '@/components/panels/CreateFormatLayoutM
 import { ContentSyncModal } from '@/components/panels/ContentSyncModal'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 function useDismissOnOutsideClick(
   open: boolean,
@@ -169,6 +170,7 @@ function HorizontalScrollAffordance({
 
 /** The two editing axes share one piece of persistent editor chrome. */
 export function EditingContextBar() {
+  const t = useT()
   const {
     project,
     settings,
@@ -409,7 +411,7 @@ export function EditingContextBar() {
         <section className="flex min-w-[12rem] flex-1 items-stretch" aria-label="Canvas format">
           <div className="mr-1.5 flex shrink-0 items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#f59e0b] shadow-[0_0_7px_rgba(245,158,11,0.35)]" />
-            <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#6b6254]">Format</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#6b6254]">{t('canvas.format')}</span>
           </div>
           {hasMultipleFamilies ? (
             <HorizontalScrollAffordance>

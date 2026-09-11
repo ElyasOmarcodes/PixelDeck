@@ -5,6 +5,7 @@ import { cellKey, type CellStatus, type LocalizableRow } from './types'
 import type { SlideBackgroundPreview } from './helpers'
 import { truncate } from './helpers'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 export interface TextOverrideCellProps {
   row: LocalizableRow
@@ -45,6 +46,7 @@ export function TextOverrideCell({
   clearLocaleContent,
   onAiTranslate,
 }: TextOverrideCellProps) {
+  const t = useT()
   const override = row.layer.localeContent?.[locale]
   const displayOverride = previewOverride ?? override
   const isDefaultLocale = locale === defaultLocale
@@ -84,7 +86,7 @@ export function TextOverrideCell({
   if (!isDefaultLocale && cellStatus === 'error') {
     return (
       <div className="min-h-[80px] rounded-xl border border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.06)] px-4 py-3 space-y-2 mb-3">
-        <div className="flex items-center gap-1.5 text-xs text-[#f87171]"><Icon name="alert-triangle" size={12} />Translation failed</div>
+        <div className="flex items-center gap-1.5 text-xs text-[#f87171]"><Icon name="alert-triangle" size={12} />{t('loc.translationFailed')}</div>
         {cellError && (
           <div className="text-[10px] text-[#f87171]/70 truncate" title={cellError}>
             {cellError}
@@ -127,10 +129,10 @@ export function TextOverrideCell({
               onClick={onAiTranslate}
               className="rounded-lg border border-[rgba(124,110,246,0.4)] bg-[rgba(124,110,246,0.1)] px-2.5 py-1 text-xs text-[#c5befd] hover:bg-[rgba(124,110,246,0.2)] transition"
             >
-              <span className="flex items-center gap-1"><Icon name="sparkles" size={11} />AI</span>
+              <span className="flex items-center gap-1"><Icon name="sparkles" size={11} />{t('loc.translateAi')}</span>
             </button>
           )}
-          <span className="flex items-center gap-1 text-xs text-amber-400/70"><Icon name="alert-triangle" size={11} />Missing</span>
+          <span className="flex items-center gap-1 text-xs text-amber-400/70"><Icon name="alert-triangle" size={11} />{t('loc.missing')}</span>
         </div>
       </div>
     )
@@ -199,7 +201,7 @@ export function TextOverrideCell({
               className="text-[10px] text-[#9d90f8] hover:text-white transition"
               title="Re-translate with AI"
             >
-              <span className="flex items-center gap-1"><Icon name="sparkles" size={10} />Re-translate</span>
+              <span className="flex items-center gap-1"><Icon name="sparkles" size={10} />{t('loc.translateRetry')}</span>
             </button>
           )}
           {!isDefaultLocale && (

@@ -22,6 +22,7 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch'
 import { FileUploadButton } from '@/components/ui/FileUploadButton'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 const ACCENT_PRESETS = [
   { cx: 50, cy: 20, rx: 500, ry: 450 },
@@ -33,6 +34,7 @@ const ACCENT_PRESETS = [
 ] as const
 
 export function BackgroundProperties({ layer }: { layer: BackgroundLayer }) {
+  const t = useT()
   const updateLayer = useEditorStore((s) => s.updateLayer)
   const selectedAccentIndex = useEditorStore((s) => s.selectedAccentIndex)
   const selectAccent = useEditorStore((s) => s.selectAccent)
@@ -76,12 +78,12 @@ export function BackgroundProperties({ layer }: { layer: BackgroundLayer }) {
     <div className="space-y-4">
       {/* Background type toggle */}
       <div>
-        <label className={labelCls}>Background Type</label>
+        <label className={labelCls}>{t('background.type')}</label>
         <SegmentedControl
           value={hasImage ? 'image' : 'gradient'}
           options={[
-            { value: 'gradient', label: <span className="flex items-center justify-center gap-1.5"><Icon name="palette" size={13} />Gradient</span> },
-            { value: 'image', label: <span className="flex items-center justify-center gap-1.5"><Icon name="image" size={13} />Image</span> },
+            { value: 'gradient', label: <span className="flex items-center justify-center gap-1.5"><Icon name="palette" size={13} />{t('background.gradient')}</span> },
+            { value: 'image', label: <span className="flex items-center justify-center gap-1.5"><Icon name="image" size={13} />{t('background.image')}</span> },
           ]}
           onChange={(mode) => {
                 if (mode === 'image') bgImageInputRef.current?.click()

@@ -14,6 +14,7 @@ import {
 } from '@/components/properties/panelConstants'
 import { LayerTextToolbar } from '@/components/text/LayerTextToolbar'
 import { Icon } from '@/components/ui/Icon'
+import { useT, type TranslationKey } from '@/i18n'
 
 // ─── FontPicker ───────────────────────────────────────────────────────────────
 
@@ -26,10 +27,10 @@ interface FontPickerProps {
 /** Which writing system the picker is currently narrowed to. */
 type ScriptFilter = 'all' | 'latin' | 'arabic'
 
-const SCRIPT_FILTERS: { value: ScriptFilter; label: string; title: string }[] = [
-  { value: 'all',    label: 'All',    title: 'Show every font' },
-  { value: 'latin',  label: 'Latin',  title: 'Latin-script fonts only' },
-  { value: 'arabic', label: 'پښتو',   title: 'Pashto / Persian / Arabic-script fonts only' },
+const SCRIPT_FILTERS: { value: ScriptFilter; labelKey: TranslationKey; titleKey: TranslationKey }[] = [
+  { value: 'all',    labelKey: 'text.fontsAll',    titleKey: 'text.fontsShowAll' },
+  { value: 'latin',  labelKey: 'text.fontsLatin',  titleKey: 'text.fontsLatinTitle' },
+  { value: 'arabic', labelKey: 'text.fontsArabic', titleKey: 'text.fontsArabicTitle' },
 ]
 
 /** Search matches the Latin name and the font's own-script name alike, so
@@ -41,6 +42,7 @@ function matchesFontSearch(entry: { label: string; nativeLabel?: string }, needl
 }
 
 function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [scriptFilter, setScriptFilter] = useState<ScriptFilter>('all')
@@ -208,7 +210,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setActiveIdx(-1) }}
-              placeholder="Search fonts…"
+              placeholder={t('text.fontsSearch')}
               className={`${inputCls} text-xs`}
             />
             {/* Script filter — Pashto/Persian faces are unreadable as Latin
@@ -218,7 +220,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
                 <button
                   key={f.value}
                   type="button"
-                  title={f.title}
+                  title={t(f.titleKey)}
                   onClick={() => { setScriptFilter(f.value); setActiveIdx(-1) }}
                   className={`rounded border px-1 py-1 text-[10px] transition-colors ${
                     scriptFilter === f.value
@@ -226,7 +228,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
                       : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:text-[#e8e8f0]'
                   }`}
                 >
-                  {f.label}
+                  {t(f.labelKey)}
                 </button>
               ))}
             </div>
@@ -237,7 +239,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
             {/* My Fonts */}
             {filteredCustom.length > 0 && (
               <>
-                <div className={sectionLabelCls}>My Fonts</div>
+                <div className={sectionLabelCls}>{t('text.fontsMine')}</div>
                 {filteredCustom.map((f, i) => {
                   const flatIdx = customStart + i
                   return (
@@ -260,7 +262,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
             {/* Web Safe */}
             {filteredWebSafe.length > 0 && (
               <>
-                <div className={sectionLabelCls}>Web Safe</div>
+                <div className={sectionLabelCls}>{t('text.fontsWebSafe')}</div>
                 {filteredWebSafe.map((f, i) => {
                   const flatIdx = webSafeStart + i
                   return (
@@ -282,7 +284,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
             {/* Google Fonts — Latin */}
             {filteredLatin.length > 0 && (
               <>
-                <div className={sectionLabelCls}>Google Fonts</div>
+                <div className={sectionLabelCls}>{t('text.fontsGoogle')}</div>
                 {filteredLatin.map((f, i) => {
                   const flatIdx = latinStart + i
                   return (
@@ -305,7 +307,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
             {/* Pashto / Persian / Arabic script */}
             {filteredArabic.length > 0 && (
               <>
-                <div className={sectionLabelCls}>پښتو · فارسی · عربی</div>
+                <div className={sectionLabelCls}>{t('text.fontsArabicSection')}</div>
                 {filteredArabic.map((f, i) => {
                   const flatIdx = arabicStart + i
                   return (
@@ -336,7 +338,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
             {/* Empty state */}
             {noResults && (
               <div className="px-3 py-4 text-sm text-[#4a4a5a] text-center">
-                No fonts match &ldquo;{search}&rdquo;
+                {t('text.fontsNoMatch', { query: search })}
               </div>
             )}
           </div>
@@ -349,6 +351,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
 // ─── TextProperties ───────────────────────────────────────────────────────────
 
 export function TextProperties({ layer }: { layer: TextLayer }) {
+  const t = useT()
   const { updateLayer, project, updateProject } = useEditorStore(
     useShallow((s) => ({
       updateLayer: s.updateLayer,
@@ -368,7 +371,7 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
 
       {/* ── Text styling toolbar — always visible ── */}
       <div className={`${panelSectionCls} !border-[rgba(124,110,246,0.35)]`}>
-        <label className={`${labelCls} flex items-center gap-1.5`}><Icon name="text" size={12} />Text Styling</label>
+        <label className={`${labelCls} flex items-center gap-1.5`}><Icon name="text" size={12} />{t('text.styling')}</label>
         {editingThis ? (
           // Canvas editor is active: it portals RichTextToolbar into this slot
           <div id="rich-text-toolbar-slot" />
@@ -380,7 +383,7 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
 
       {/* ── Font ── */}
       <div className={panelSectionCls}>
-        <label className={labelCls}>Font</label>
+        <label className={labelCls}>{t('text.font')}</label>
         <FontPicker
           value={layer.fontFamily}
           customFonts={customFonts}
@@ -457,18 +460,18 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
         </div>
 
         {/* Spacing */}
-        <SliderField label="Letter Spacing" value={layer.letterSpacing} min={-20} max={100} step={1} onChange={(v) => upd({ letterSpacing: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} />
-        <SliderField label="Line Height" value={layer.lineHeight} min={0.5} max={4} step={0.05} unit="×" onChange={(v) => upd({ lineHeight: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} className="!mb-0" />
+        <SliderField label={t('text.letterSpacing')} value={layer.letterSpacing} min={-20} max={100} step={1} onChange={(v) => upd({ letterSpacing: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} />
+        <SliderField label={t('text.lineHeight')} value={layer.lineHeight} min={0.5} max={4} step={0.05} unit="×" onChange={(v) => upd({ lineHeight: v })} onInteractionStart={pauseTemporal} onInteractionEnd={resumeTemporal} className="!mb-0" />
       </div>
 
       {/* ── Align ── */}
       <div className={panelSectionCls}>
-        <label className={labelCls}>Alignment</label>
+        <label className={labelCls}>{t('text.alignment')}</label>
         <div className="grid grid-cols-3 gap-2">
           {([
-            { value: 'left',   label: 'Left',   icon: 'align-left' },
-            { value: 'center', label: 'Center', icon: 'align-center' },
-            { value: 'right',  label: 'Right',  icon: 'align-right' },
+            { value: 'left',   label: t('text.alignLeft'),   icon: 'align-left' },
+            { value: 'center', label: t('text.alignCenter'), icon: 'align-center' },
+            { value: 'right',  label: t('text.alignRight'),  icon: 'align-right' },
           ] as const).map((item) => (
             <button
               key={item.value}
@@ -491,12 +494,12 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
         {/* Vertical alignment — meaningful when the box has an explicit height */}
         {layer.height != null && (
           <div className="mt-3">
-            <label className={labelCls}>Vertical Align</label>
+            <label className={labelCls}>{t('text.verticalAlign')}</label>
             <div className="grid grid-cols-3 gap-2">
               {([
-                { value: 'top',    label: 'Top',    icon: 'align-top' },
-                { value: 'middle', label: 'Middle', icon: 'align-middle' },
-                { value: 'bottom', label: 'Bottom', icon: 'align-bottom' },
+                { value: 'top',    label: t('text.verticalTop'),    icon: 'align-top' },
+                { value: 'middle', label: t('text.verticalMiddle'), icon: 'align-middle' },
+                { value: 'bottom', label: t('text.verticalBottom'), icon: 'align-bottom' },
               ] as const).map((item) => (
                 <button
                   key={item.value}

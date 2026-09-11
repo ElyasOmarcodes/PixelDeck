@@ -15,6 +15,7 @@ import { BulkTranslateBar } from './localization/BulkTranslateBar'
 import { SlideGroupSection } from './localization/SlideGroupSection'
 import { PromoteLocaleDialog } from './localization/PromoteLocaleDialog'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 const ApiKeysModal = lazy(() =>
   import('@/components/panels/ApiKeysModal').then((m) => ({ default: m.ApiKeysModal })),
@@ -36,6 +37,7 @@ function getErrorMessage(error: unknown): string {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function LocalizationView({ onBack, embedded = false, onPreview }: LocalizationViewProps) {
+  const t = useT()
   const {
     project,
     activeLocale,
@@ -587,8 +589,8 @@ export function LocalizationView({ onBack, embedded = false, onPreview }: Locali
               {groups.every((g) => g.rows.length === 0) && (
                 <div className="rounded-2xl border border-white/8 bg-[#18181f]/78 px-8 py-16 text-center">
                   <div className="mb-4 flex justify-center text-[#4d4d60]"><Icon name="globe" size={38} strokeWidth={1.4} /></div>
-                  <div className="text-lg text-[#d5d5df] mb-2">No localizable content</div>
-                  <div className="text-sm text-[#6b6b7a]">Add text, phone, or image layers to your slides to start localizing.</div>
+                  <div className="text-lg text-[#d5d5df] mb-2">{t('loc.empty')}</div>
+                  <div className="text-sm text-[#6b6b7a]">{t('loc.emptyHint')}</div>
                 </div>
               )}
             </div>
@@ -603,7 +605,7 @@ export function LocalizationView({ onBack, embedded = false, onPreview }: Locali
               className="w-72 shrink-0 overflow-y-auto border-l border-[rgba(255,255,255,0.06)] bg-[#18181f] px-4 py-4"
             >
               <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#6b6b7a]">
-                Text Styling
+                {t('loc.textStyling')}
               </div>
               <div className="mb-3 truncate text-xs text-[#c4b5fd]" title={editingTextCell.layerName}>
                 <Icon name="text" size={12} className="inline-block align-[-2px]" /> {editingTextCell.layerName}

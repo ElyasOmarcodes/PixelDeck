@@ -285,8 +285,11 @@ export default function App() {
             <EditingContextBar />
             <EditingContextAlert />
 
-            {/* Canvas fills remaining height — StageCanvas takes full space */}
-            <div style={{ flex: 1, position: 'relative', zIndex: 0, overflow: 'hidden' }}>
+            {/* Canvas fills remaining height — StageCanvas takes full space.
+                dir is pinned to ltr: an RTL interface must not mirror the design
+                surface, or slide coordinates and pano seams would flip under the
+                user while the exported PNGs stayed the same. */}
+            <div dir="ltr" style={{ flex: 1, position: 'relative', zIndex: 0, overflow: 'hidden' }}>
               <StageCanvas stageRef={stageRef} />
               {(scopedEditingIndicator.isFormatScoped || scopedEditingIndicator.isLocaleScoped) && (
                 <div

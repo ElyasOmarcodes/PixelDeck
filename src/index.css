@@ -54,6 +54,14 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Pashto and Persian need a face that carries the script. Vazirmatn leads
+     the stack for those UI languages (it also has Latin glyphs, so mixed
+     strings like "iPhone 16 Pro" stay consistent). */
+  :root[lang='ps'] body,
+  :root[lang='fa'] body {
+    font-family: 'Vazirmatn', 'Noto Sans Arabic', 'Inter', system-ui, sans-serif;
+  }
+
   /* Anything the user genuinely reads or edits stays selectable. */
   input, textarea, [contenteditable], [contenteditable] *,
   .pd-selectable, .pd-selectable * {

@@ -2,6 +2,7 @@ import type { RefObject } from 'react'
 import { getLanguageName } from '@/utils/locale'
 import { LanguagePopover } from './LanguagePopover'
 import { Icon } from '@/components/ui/Icon'
+import { useT } from '@/i18n'
 
 export interface LocaleBarProps {
   locales: string[]
@@ -42,6 +43,7 @@ export function LocaleBar({
   addLocale,
   setAddLocaleOpen,
 }: LocaleBarProps) {
+  const t = useT()
   return (
     <section className="border-b border-white/8 bg-[#18181f]/86 px-8 py-4 backdrop-blur-xl shrink-0">
       <div className="flex flex-wrap items-start gap-3">
@@ -124,7 +126,7 @@ export function LocaleBar({
                 className="flex items-center gap-2 rounded-full border border-[#7c6ef6]/40 bg-[#7c6ef6]/10 px-4 py-2 text-sm font-medium text-[#cbbfff] transition hover:border-[#7c6ef6]/70 hover:bg-[#7c6ef6]/20 hover:text-white"
               >
                 <Icon name="play" size={12} />
-                Preview
+                {t('loc.preview')}
               </button>
             )}
             <button
@@ -133,7 +135,7 @@ export function LocaleBar({
               className="flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-5 py-2 text-sm font-medium text-[#d7d7e3] transition hover:border-[#7c6ef6]/50 hover:bg-[#7c6ef6]/10 hover:text-white"
             >
               <Icon name="arrow-left" size={14} />
-              Back to Editor
+              {t('loc.backToEditor')}
             </button>
           </div>
         </div>
