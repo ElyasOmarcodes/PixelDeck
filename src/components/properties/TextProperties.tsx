@@ -3,7 +3,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useEditorStore } from '@/store'
 import type { TextLayer, Layer, CustomFontRef } from '@/types'
 import { SliderField } from '@/components/properties/PropertyControls'
-import { FONT_LIST, WEB_SAFE_FONTS, getFontWeights, generateCustomFontFamily, loadCustomFont, unregisterCustomFont, preloadFont, ensureFontReady } from '@/utils/fonts'
+import { FONT_LIST, WEB_SAFE_FONTS, ARABIC_PREVIEW_SAMPLE, getFontWeights, generateCustomFontFamily, loadCustomFont, unregisterCustomFont, preloadFont, ensureFontReady } from '@/utils/fonts'
 import { useFontStore } from '@/store/fontStore'
 import {
   inputCls,
@@ -23,9 +23,27 @@ interface FontPickerProps {
   onChange: (family: string) => void
 }
 
+/** Which writing system the picker is currently narrowed to. */
+type ScriptFilter = 'all' | 'latin' | 'arabic'
+
+const SCRIPT_FILTERS: { value: ScriptFilter; label: string; title: string }[] = [
+  { value: 'all',    label: 'All',    title: 'Show every font' },
+  { value: 'latin',  label: 'Latin',  title: 'Latin-script fonts only' },
+  { value: 'arabic', label: 'پښتو',   title: 'Pashto / Persian / Arabic-script fonts only' },
+]
+
+/** Search matches the Latin name and the font's own-script name alike, so
+ *  "وزیر" finds Vazirmatn just as "vazir" does. */
+function matchesFontSearch(entry: { label: string; nativeLabel?: string }, needle: string): boolean {
+  if (!needle) return true
+  const q = needle.toLowerCase()
+  return entry.label.toLowerCase().includes(q) || (entry.nativeLabel?.includes(needle) ?? false)
+}
+
 function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
+  const [scriptFilter, setScriptFilter] = useState<ScriptFilter>('all')
   // Index into the flat filtered list for keyboard navigation (-1 = none)
   const [activeIdx, setActiveIdx] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -58,21 +76,23 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
     }
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const filteredCustom = customFonts.filter(
-    (f) => !search || f.label.toLowerCase().includes(search.toLowerCase()) || f.family === value,
-  )
-  const filteredWebSafe = WEB_SAFE_FONTS.filter(
-    (f) => !search || f.label.toLowerCase().includes(search.toLowerCase()) || f.family === value,
-  )
-  const filteredGoogle = FONT_LIST.filter(
-    (f) => !search || f.label.toLowerCase().includes(search.toLowerCase()) || f.family === value,
-  )
+  // The selected family always survives filtering — the trigger must keep
+  // showing what the layer actually uses, even under a narrower filter.
+  const keep = (entry: { family: string; label: string; nativeLabel?: string }, script: 'latin' | 'arabic') =>
+    entry.family === value ||
+    (matchesFontSearch(entry, search) && (scriptFilter === 'all' || scriptFilter === script))
+
+  const filteredCustom = customFonts.filter((f) => keep(f, 'latin'))
+  const filteredWebSafe = WEB_SAFE_FONTS.filter((f) => keep(f, 'latin'))
+  const filteredLatin = FONT_LIST.filter((f) => f.script !== 'arabic' && keep(f, 'latin'))
+  const filteredArabic = FONT_LIST.filter((f) => f.script === 'arabic' && keep(f, 'arabic'))
 
   // Flat ordered list for keyboard navigation
   const flatList = [
     ...filteredCustom.map((f) => f.family),
     ...filteredWebSafe.map((f) => f.family),
-    ...filteredGoogle.map((f) => f.family),
+    ...filteredLatin.map((f) => f.family),
+    ...filteredArabic.map((f) => f.family),
   ]
 
   const allFontsList = [...customFonts, ...FONT_LIST, ...WEB_SAFE_FONTS]
@@ -148,12 +168,14 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
   const itemActiveCls = 'bg-[rgba(255,255,255,0.08)] outline-none'
 
   const noResults =
-    filteredCustom.length === 0 && filteredWebSafe.length === 0 && filteredGoogle.length === 0
+    filteredCustom.length === 0 && filteredWebSafe.length === 0 &&
+    filteredLatin.length === 0 && filteredArabic.length === 0
 
   // Compute per-section start indices for keyboard highlight mapping
   const customStart = 0
   const webSafeStart = filteredCustom.length
-  const googleStart = filteredCustom.length + filteredWebSafe.length
+  const latinStart = webSafeStart + filteredWebSafe.length
+  const arabicStart = latinStart + filteredLatin.length
 
   return (
     <div className="relative" ref={containerRef} onKeyDown={handleKeyDown}>
@@ -189,6 +211,25 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
               placeholder="Search fonts…"
               className={`${inputCls} text-xs`}
             />
+            {/* Script filter — Pashto/Persian faces are unreadable as Latin
+                previews, so they get their own scope instead of being mixed in. */}
+            <div className="mt-1.5 grid grid-cols-3 gap-1">
+              {SCRIPT_FILTERS.map((f) => (
+                <button
+                  key={f.value}
+                  type="button"
+                  title={f.title}
+                  onClick={() => { setScriptFilter(f.value); setActiveIdx(-1) }}
+                  className={`rounded border px-1 py-1 text-[10px] transition-colors ${
+                    scriptFilter === f.value
+                      ? 'border-[#7c6ef6] bg-[rgba(124,110,246,0.18)] text-[#c4b5fd]'
+                      : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:text-[#e8e8f0]'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Scrollable font list */}
@@ -238,12 +279,12 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
               </>
             )}
 
-            {/* Google Fonts */}
-            {filteredGoogle.length > 0 && (
+            {/* Google Fonts — Latin */}
+            {filteredLatin.length > 0 && (
               <>
                 <div className={sectionLabelCls}>Google Fonts</div>
-                {filteredGoogle.map((f, i) => {
-                  const flatIdx = googleStart + i
+                {filteredLatin.map((f, i) => {
+                  const flatIdx = latinStart + i
                   return (
                     <button
                       key={f.family}
@@ -255,6 +296,37 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
                       style={{ fontFamily: f.family }}
                     >
                       {f.label}
+                    </button>
+                  )
+                })}
+              </>
+            )}
+
+            {/* Pashto / Persian / Arabic script */}
+            {filteredArabic.length > 0 && (
+              <>
+                <div className={sectionLabelCls}>پښتو · فارسی · عربی</div>
+                {filteredArabic.map((f, i) => {
+                  const flatIdx = arabicStart + i
+                  return (
+                    <button
+                      key={f.family}
+                      data-font-item
+                      type="button"
+                      onClick={() => handleSelect(f.family)}
+                      onMouseEnter={() => preloadFont(f.family)}
+                      className={`${itemBaseCls} flex items-baseline justify-between gap-2 ${f.family === value ? itemSelectedCls : ''} ${flatIdx === activeIdx ? itemActiveCls : ''}`}
+                    >
+                      <span className="truncate text-xs text-[#a0a0b0]">{f.label}</span>
+                      {/* Preview uses Pashto letters — a Latin sample tells you
+                          nothing about a Naskh or Nastaliq face. */}
+                      <span
+                        dir="rtl"
+                        className="shrink-0 text-base leading-tight"
+                        style={{ fontFamily: f.family }}
+                      >
+                        {f.nativeLabel ?? ARABIC_PREVIEW_SAMPLE}
+                      </span>
                     </button>
                   )
                 })}

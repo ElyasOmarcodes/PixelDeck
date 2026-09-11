@@ -87,8 +87,9 @@ export function RichTextToolbar({
           }}
           disabled={!api.hasMarks}
           className={`${toolbarBtnCls(false)} disabled:opacity-35 disabled:cursor-not-allowed`}
+          aria-label="Clear formatting in selection"
         >
-          ⌫
+          <Icon name="eraser" size={14} />
         </button>
       </div>
 

@@ -1,10 +1,21 @@
 // ─── Curated Google Fonts for PixelDeck ──────────────────────────────────────
 
+/** Writing system a face is designed for. Absent means Latin. */
+export type FontScript = 'latin' | 'arabic'
+
 export interface FontEntry {
   family: string
   label: string
   category: 'sans-serif' | 'serif' | 'display' | 'monospace' | 'handwriting'
   weights: number[]
+  /** Defaults to 'latin' when omitted. */
+  script?: FontScript
+  /**
+   * Name in the font's own script. Searchable, and used as the preview string
+   * in the picker — a Pashto face has to be previewed with Pashto letters or
+   * the list shows ten identical "Aa" rows.
+   */
+  nativeLabel?: string
 }
 
 /** Web-safe fonts — available without network, work in headless export.
@@ -107,6 +118,31 @@ export const FONT_LIST: FontEntry[] = [
   { family: 'Satisfy',          label: 'Satisfy',          category: 'handwriting', weights: [400] },
   { family: 'Parisienne',       label: 'Parisienne',       category: 'handwriting', weights: [400] },
 
+  // ── Pashto / Persian / Arabic script ───────────────────────────────────────
+  // Curated for Pashto first: every face below carries the extra Pashto
+  // letters (ټ ډ ړ ږ ژ ښ ګ ڼ ې ی) on top of the Arabic and Persian sets, so a
+  // Pashto headline never falls back mid-word.
+  { family: 'Vazirmatn',            label: 'Vazirmatn',            category: 'sans-serif',  weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], script: 'arabic', nativeLabel: 'وزیر متن' },
+  { family: 'Noto Sans Arabic',     label: 'Noto Sans Arabic',     category: 'sans-serif',  weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], script: 'arabic', nativeLabel: 'نوتو سانس' },
+  { family: 'Noto Naskh Arabic',    label: 'Noto Naskh Arabic',    category: 'serif',       weights: [400, 500, 600, 700], script: 'arabic', nativeLabel: 'نوتو نسخ' },
+  { family: 'Noto Kufi Arabic',     label: 'Noto Kufi Arabic',     category: 'display',     weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], script: 'arabic', nativeLabel: 'نوتو کوفي' },
+  { family: 'IBM Plex Sans Arabic', label: 'IBM Plex Sans Arabic', category: 'sans-serif',  weights: [100, 200, 300, 400, 500, 600, 700], script: 'arabic', nativeLabel: 'آی بي ام پلېکس' },
+  { family: 'Cairo',                label: 'Cairo',                category: 'sans-serif',  weights: [200, 300, 400, 500, 600, 700, 800, 900], script: 'arabic', nativeLabel: 'قاهره' },
+  { family: 'Tajawal',              label: 'Tajawal',              category: 'sans-serif',  weights: [200, 300, 400, 500, 700, 800, 900], script: 'arabic', nativeLabel: 'تجوال' },
+  { family: 'Almarai',              label: 'Almarai',              category: 'sans-serif',  weights: [300, 400, 700, 800], script: 'arabic', nativeLabel: 'المراعي' },
+  { family: 'Readex Pro',           label: 'Readex Pro',           category: 'sans-serif',  weights: [200, 300, 400, 500, 600, 700], script: 'arabic', nativeLabel: 'ریډېکس' },
+  { family: 'Baloo Bhaijaan 2',     label: 'Baloo Bhaijaan 2',     category: 'display',     weights: [400, 500, 600, 700, 800], script: 'arabic', nativeLabel: 'بالو بھائی جان' },
+  { family: 'Reem Kufi',            label: 'Reem Kufi',            category: 'display',     weights: [400, 500, 600, 700], script: 'arabic', nativeLabel: 'ریم کوفي' },
+  { family: 'Lalezar',              label: 'Lalezar',              category: 'display',     weights: [400], script: 'arabic', nativeLabel: 'لاله زار' },
+  { family: 'Amiri',                label: 'Amiri',                category: 'serif',       weights: [400, 700], script: 'arabic', nativeLabel: 'أميري' },
+  { family: 'Scheherazade New',     label: 'Scheherazade New',     category: 'serif',       weights: [400, 500, 600, 700], script: 'arabic', nativeLabel: 'شهرزاد' },
+  { family: 'Lateef',               label: 'Lateef',               category: 'serif',       weights: [200, 300, 400, 500, 600, 700, 800], script: 'arabic', nativeLabel: 'لطیف' },
+  { family: 'Harmattan',            label: 'Harmattan',            category: 'sans-serif',  weights: [400, 500, 600, 700], script: 'arabic', nativeLabel: 'هرمتان' },
+  { family: 'Alkalami',             label: 'Alkalami',             category: 'serif',       weights: [400], script: 'arabic', nativeLabel: 'القلمي' },
+  { family: 'Markazi Text',         label: 'Markazi Text',         category: 'serif',       weights: [400, 500, 600, 700], script: 'arabic', nativeLabel: 'مرکزی' },
+  { family: 'Gulzar',               label: 'Gulzar',               category: 'handwriting', weights: [400], script: 'arabic', nativeLabel: 'گلزار' },
+  { family: 'Noto Nastaliq Urdu',   label: 'Noto Nastaliq Urdu',   category: 'handwriting', weights: [400, 500, 600, 700], script: 'arabic', nativeLabel: 'نستعلیق' },
+
   // ── Monospace
   { family: 'JetBrains Mono',   label: 'JetBrains Mono',   category: 'monospace',  weights: [300, 400, 500, 600, 700, 800] },
   { family: 'Fira Code',        label: 'Fira Code',        category: 'monospace',  weights: [300, 400, 500, 600, 700] },
@@ -114,6 +150,23 @@ export const FONT_LIST: FontEntry[] = [
   { family: 'Space Mono',       label: 'Space Mono',       category: 'monospace',  weights: [400, 700] },
   { family: 'Geist Mono',       label: 'Geist Mono',       category: 'monospace',  weights: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
 ]
+
+/** Every curated face designed for the Pashto/Persian/Arabic script. */
+export const ARABIC_SCRIPT_FONTS: FontEntry[] = FONT_LIST.filter((f) => f.script === 'arabic')
+
+/** Faces designed for the Latin script (everything without an explicit script). */
+export const LATIN_SCRIPT_FONTS: FontEntry[] = FONT_LIST.filter((f) => f.script !== 'arabic')
+
+/** Default face used when text switches to the Pashto/Persian script. */
+export const DEFAULT_ARABIC_FONT = 'Vazirmatn'
+
+/** Sample string shown when previewing an Arabic-script face. */
+export const ARABIC_PREVIEW_SAMPLE = 'پښتو ابجد'
+
+/** Which writing system a family belongs to. Unknown families read as Latin. */
+export function getFontScript(family: string): FontScript {
+  return FONT_LIST.find((f) => f.family === family)?.script ?? 'latin'
+}
 
 /** Returns the available weights for a given font family */
 export function getFontWeights(family: string): number[] {
