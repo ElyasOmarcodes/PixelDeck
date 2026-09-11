@@ -125,14 +125,37 @@ jobs:
           --bundles ${{ matrix.bundles }}
           ${{ matrix.target && format('--target {0}', matrix.target) || '' }}
 
+      # `shell: bash` is required — the Windows runner defaults to pwsh, where
+      # none of this syntax works.
       - name: Collect installers
         shell: bash
         run: |
+          set -euo pipefail
           mkdir -p out
           base="src-tauri/target${{ matrix.target && format('/{0}', matrix.target) || '' }}/release/bundle"
+
+          if [ ! -d "$base" ]; then
+            echo "::error::No bundle directory at $base — the bundler produced nothing."
+            echo "── target tree ──"
+            find src-tauri/target -maxdepth 4 -type d | head -50
+            exit 1
+          fi
+
+          # Deliberately broad: match on installer extension rather than on
+          # Tauri's exact file naming, which has changed between releases
+          # (e.g. the NSIS output is PixelDeck_<ver>_x64-setup.exe today).
           find "$base" -type f \
-            \( -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' -o -name '*-setup.exe' \) \
+            \( -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' \
+               -o -name '*.exe' -o -name '*.msi' -o -name '*.AppImage' \) \
             -exec cp {} out/ \;
+
+          if [ -z "$(ls -A out/)" ]; then
+            echo "::error::Bundler ran but produced no installer for ${{ matrix.bundles }}."
+            echo "── contents of $base ──"
+            find "$base" -type f | head -50
+            exit 1
+          fi
+
           echo "── Installer sizes ──"
           ls -lh out/
 
@@ -149,6 +172,14 @@ jobs:
     name: Android
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+
+    env:
+      # The `secrets` context is not allowed in a step-level `if`, so the
+      # "do we have a keystore?" check is hoisted to a job-level env flag —
+      # job env *is* allowed to read secrets. Referencing secrets directly from
+      # the step's `if` fails the whole workflow at parse time, before any job
+      # starts, which is what broke the first run of this file.
+      HAS_ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
 
     steps:
       - uses: actions/checkout@v7
@@ -203,8 +234,7 @@ jobs:
       # A signed, installable APK is produced below when the repository has
       # keystore secrets configured.
       - name: Sign the release build
-        id: sign
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: env.HAS_ANDROID_KEYSTORE == 'true'
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
