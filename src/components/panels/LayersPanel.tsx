@@ -11,6 +11,7 @@ import {
   SortableContext, sortableKeyboardCoordinates,
   verticalListSortingStrategy, arrayMove,
 } from '@dnd-kit/sortable'
+import { Icon, type IconName } from '@/components/ui/Icon'
 import { LAYER_ICON, type ContextMenu } from './layers/constants'
 import { SortableLayer, SortableGroup, DragPreview } from './layers/SortableLayerRow'
 import { AssetsSection } from './layers/AssetsSection'
@@ -279,14 +280,14 @@ export function LayersPanel() {
     else if (key === 'brand') addBrand()
     else if (key === 'image') imageInputRef.current?.click()
   }
-  const insertTools = [
-    { key: 'phone', icon: '📱', label: 'Devices' },
-    { key: 'text', icon: 'T', label: 'Text' },
-    { key: 'shape', icon: '▭', label: 'Shape' },
-    { key: 'emoji', icon: '😀', label: 'Emoji' },
-    { key: 'chip', icon: '◉', label: 'Chip' },
-    { key: 'brand', icon: '🏷', label: 'Brand' },
-    { key: 'image', icon: '🖼', label: 'Image' },
+  const insertTools: { key: string; icon: IconName; label: string }[] = [
+    { key: 'phone', icon: 'phone', label: 'Devices' },
+    { key: 'text', icon: 'text', label: 'Text' },
+    { key: 'shape', icon: 'shape', label: 'Shape' },
+    { key: 'emoji', icon: 'emoji', label: 'Emoji' },
+    { key: 'chip', icon: 'chip', label: 'Chip' },
+    { key: 'brand', icon: 'brand', label: 'Brand' },
+    { key: 'image', icon: 'image', label: 'Image' },
   ]
 
   return (
@@ -316,7 +317,7 @@ export function LayersPanel() {
               style={{ borderColor: 'rgba(255,255,255,0.08)' }}
               title={`Add ${tool.label}`}
             >
-              <span className="flex h-6 items-center justify-center text-base text-[#e8e8f0]">{tool.icon}</span>
+              <span className="flex h-6 items-center justify-center text-[#e8e8f0]"><Icon name={tool.icon} size={17} /></span>
               <span className="text-[10px] leading-none text-[#b0b0c4]">{tool.label}</span>
             </button>
           ))}
@@ -416,12 +417,12 @@ export function LayersPanel() {
               onClick={(e) => { e.stopPropagation(); setLayerVisibility(backgroundLayer.id, !backgroundLayer.visible) }}
               className="w-5 h-5 flex items-center justify-center text-xs rounded hover:bg-[rgba(255,255,255,0.08)] shrink-0"
               style={{ color: backgroundLayer.visible ? '#e8e8f0' : '#3a3a4a' }}
-            >{backgroundLayer.visible ? '◉' : '○'}</button>
-            <span className="text-xs shrink-0" style={{ color: '#6b6b7a' }}>🎨</span>
+            >{backgroundLayer.visible ? <Icon name="eye" size={13} /> : <Icon name="eye-off" size={13} />}</button>
+            <span className="shrink-0" style={{ color: '#8a86a0' }}><Icon name="palette" size={13} /></span>
             <span className="flex-1 text-xs truncate" style={{ color: selection?.layerId === backgroundLayer.id ? '#e8e8f0' : '#b0b0c4' }}>
               {backgroundLayer.name}
             </span>
-            <span className="shrink-0 text-xs" style={{ color: '#3a3a4a' }} title="Background cannot be moved">🔒</span>
+            <span className="shrink-0" style={{ color: '#3a3a4a' }} title="Background cannot be moved"><Icon name="lock" size={12} /></span>
           </div>
         )}
       </div>

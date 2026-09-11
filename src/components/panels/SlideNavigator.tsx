@@ -12,6 +12,7 @@ import { MAX_PANO_COMPENSATION_PX } from '@/utils/panoGeometry'
 import type { BackgroundLayer, SlideGroup } from '@/types'
 import type { ThumbnailMap } from '@/hooks/useThumbnails'
 import { ExportModal } from './ExportModal'
+import { Icon } from '@/components/ui/Icon'
 
 interface ContextMenu {
   groupId: string
@@ -192,10 +193,10 @@ function SortableGroupItem({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: 10,
+                          color: '#4d4d60',
                         }}
                       >
-                        📱
+                        <Icon name="phone" size={13} />
                       </div>
                     )}
                   </div>
@@ -445,9 +446,10 @@ export function SlideNavigator({ thumbnails, staleGroupIds, stageRef, onCaptureT
         <button
           onClick={addSlideGroup}
           title="Add slide group"
-          className="shrink-0 w-8 h-8 flex items-center justify-center text-[#6b6b7a] hover:text-[#e8e8f0] rounded border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)] text-base transition-colors ml-1"
+          aria-label="Add slide group"
+          className="shrink-0 w-8 h-8 flex items-center justify-center text-[#6b6b7a] hover:text-[#e8e8f0] rounded border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)] transition-colors ml-1"
         >
-          ＋
+          <Icon name="plus" size={15} strokeWidth={2.2} />
         </button>
       </div>
 

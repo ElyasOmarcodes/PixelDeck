@@ -1,5 +1,6 @@
 import { ModalShell } from '@/components/ui/ModalShell'
 import { getLanguageName } from '@/utils/locale'
+import { Icon } from '@/components/ui/Icon'
 
 interface PromoteLocaleDialogProps {
   open: boolean
@@ -90,7 +91,7 @@ export function PromoteLocaleDialog({
         {!isComplete && (
           <div className="rounded-2xl border border-[rgba(245,158,11,0.35)] bg-[rgba(245,158,11,0.08)] p-4">
             <div className="flex items-start gap-3">
-              <div className="mt-0.5 text-sm text-[#f59e0b]">⚠</div>
+              <div className="mt-0.5 text-[#f59e0b]"><Icon name="alert-triangle" size={15} /></div>
               <div className="space-y-3">
                 <div>
                   <div className="text-sm font-semibold text-[#fde68a]">Some layers are still incomplete</div>
@@ -104,7 +105,7 @@ export function PromoteLocaleDialog({
                   <ul className="space-y-2 text-sm text-[#d9d9e6]">
                     {incompleteLabels.map((label) => (
                       <li key={label} className="flex gap-2">
-                        <span className="text-[#f59e0b]">•</span>
+                        <span className="mt-1.5 text-[#f59e0b]"><Icon name="bullet" size={5} /></span>
                         <span>{label}</span>
                       </li>
                     ))}

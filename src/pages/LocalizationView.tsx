@@ -14,6 +14,7 @@ import { LocaleBar } from './localization/LocaleBar'
 import { BulkTranslateBar } from './localization/BulkTranslateBar'
 import { SlideGroupSection } from './localization/SlideGroupSection'
 import { PromoteLocaleDialog } from './localization/PromoteLocaleDialog'
+import { Icon } from '@/components/ui/Icon'
 
 const ApiKeysModal = lazy(() =>
   import('@/components/panels/ApiKeysModal').then((m) => ({ default: m.ApiKeysModal })),
@@ -585,7 +586,7 @@ export function LocalizationView({ onBack, embedded = false, onPreview }: Locali
 
               {groups.every((g) => g.rows.length === 0) && (
                 <div className="rounded-2xl border border-white/8 bg-[#18181f]/78 px-8 py-16 text-center">
-                  <div className="text-4xl mb-4">🌐</div>
+                  <div className="mb-4 flex justify-center text-[#4d4d60]"><Icon name="globe" size={38} strokeWidth={1.4} /></div>
                   <div className="text-lg text-[#d5d5df] mb-2">No localizable content</div>
                   <div className="text-sm text-[#6b6b7a]">Add text, phone, or image layers to your slides to start localizing.</div>
                 </div>
@@ -605,7 +606,7 @@ export function LocalizationView({ onBack, embedded = false, onPreview }: Locali
                 Text Styling
               </div>
               <div className="mb-3 truncate text-xs text-[#c4b5fd]" title={editingTextCell.layerName}>
-                ✏️ {editingTextCell.layerName}
+                <Icon name="text" size={12} className="inline-block align-[-2px]" /> {editingTextCell.layerName}
                 <span className="ml-1.5 text-[#8f90a3]">· {getLanguageName(editingTextCell.locale)}</span>
               </div>
               <div ref={setToolbarSlotEl} />

@@ -1,4 +1,5 @@
 import type { RefObject } from 'react'
+import { Icon } from '@/components/ui/Icon'
 
 export interface BulkTranslateBarProps {
   nonDefaultLocales: string[]
@@ -58,7 +59,12 @@ export function BulkTranslateBar({
           }`}
           title={!hasApiKey ? 'Configure an AI API key in AI Settings' : undefined}
         >
-          {isBulkRunning ? '⟳ Translating…' : `✦ Translate all (${nonDefaultLocales.length} lang${nonDefaultLocales.length > 1 ? 's' : ''})`}
+          <span className="flex items-center gap-1.5">
+            <Icon name={isBulkRunning ? 'spinner' : 'sparkles'} size={12} />
+            {isBulkRunning
+              ? 'Translating…'
+              : `Translate all (${nonDefaultLocales.length} lang${nonDefaultLocales.length > 1 ? 's' : ''})`}
+          </span>
         </button>
 
         {!hasApiKey && (

@@ -4,6 +4,7 @@ import { listModels, searchModels } from '@/ai/models'
 import { AI_PROVIDERS, getDefaultModel } from '@/ai/providers'
 import { useApiKeysStore } from '@/store/apiKeys'
 import type { AiModel, AiProvider } from '@/ai/providers'
+import { Icon } from '@/components/ui/Icon'
 
 const inputCls =
   'bg-[#0f0f13] border border-[rgba(255,255,255,0.1)] rounded px-3 py-2 text-sm text-[#e8e8f0] w-full focus:outline-none focus:border-[rgba(124,110,246,0.5)]'
@@ -202,8 +203,9 @@ export function AiProviderSettings() {
         </button>
         {visibleTestState === 'success' && (
           <div className="mt-2 rounded-lg border border-[rgba(74,222,128,0.25)] bg-[rgba(74,222,128,0.08)] px-3 py-3">
-            <p className="text-xs text-[#86efac] leading-relaxed">
-              ✓ Connection works — translated &quot;Hello, world!&quot; to Spanish: &quot;{testResult}&quot;
+            <p className="flex items-start gap-1.5 text-xs text-[#86efac] leading-relaxed">
+              <Icon name="check" size={12} strokeWidth={2.4} className="mt-0.5" />
+              <span>Connection works — translated &quot;Hello, world!&quot; to Spanish: &quot;{testResult}&quot;</span>
             </p>
           </div>
         )}

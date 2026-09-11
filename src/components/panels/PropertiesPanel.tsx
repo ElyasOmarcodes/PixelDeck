@@ -41,6 +41,7 @@ import { getCanvasFormat, getFormatCanvasDims, getFormatLabel, getProjectActiveF
 import type { CanvasFormatId } from '@/types'
 import { getLayerBBox, getUnionBBox, computeAlignPatch, type AlignAxis } from '@/utils/alignLayers'
 import { getLanguageName } from '@/utils/locale'
+import { Icon } from '@/components/ui/Icon'
 
 // ─── Alignment Section ────────────────────────────────────────────────────────
 
@@ -236,7 +237,7 @@ function LayoutTab({ layer }: { layer: Layer }) {
                     : 'border-[rgba(255,255,255,0.06)] text-[#3a3a4a]'
                 } hover:border-[rgba(255,255,255,0.22)]`}
               >
-                {layer.visible ? '●' : '○'}
+                <Icon name={layer.visible ? 'eye' : 'eye-off'} size={14} />
               </button>
               <button
                 type="button"
@@ -248,7 +249,7 @@ function LayoutTab({ layer }: { layer: Layer }) {
                     : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a]'
                 } hover:border-[rgba(255,255,255,0.22)]`}
               >
-                {layer.locked ? '⚿' : '⚷'}
+                <Icon name={layer.locked ? 'lock' : 'unlock'} size={13} />
               </button>
             </div>
           )}
@@ -312,7 +313,10 @@ function LayoutTab({ layer }: { layer: Layer }) {
                           : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:text-[#e8e8f0]'
                       }`}
                     >
-                      {(layer as TextLayer).height == null ? '✓ Auto' : 'Auto'}
+                      <span className="flex items-center gap-1">
+                        {(layer as TextLayer).height == null && <Icon name="check" size={10} strokeWidth={2.4} />}
+                        Auto
+                      </span>
                     </button>
                   </div>
                   {(layer as TextLayer).height != null && (
@@ -600,8 +604,9 @@ export function PropertiesPanel() {
         ) : (
           <>
             {editingGroupId && selection?.layerId && (
-              <div className="mb-4 rounded-xl border border-[rgba(124,110,246,0.3)] bg-[rgba(124,110,246,0.14)] px-3 py-2 text-xs text-[#c4b5fd]">
-                ✦ Editing inside group
+              <div className="mb-4 flex items-center gap-2 rounded-xl border border-[rgba(124,110,246,0.3)] bg-[rgba(124,110,246,0.14)] px-3 py-2 text-xs text-[#c4b5fd]">
+                <Icon name="group" size={13} />
+                Editing inside group
               </div>
             )}
 

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { ModalShell } from '@/components/ui/ModalShell'
 import { HELP_CHAPTERS, type HelpSectionId } from '@/components/panels/help/loadHelpChapters'
 import { HelpMarkdown } from '@/components/panels/help/HelpMarkdown'
+import { Icon } from '@/components/ui/Icon'
 
 interface HelpModalProps {
   open: boolean
@@ -173,18 +174,20 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
                   type="button"
                   disabled={activeIndex === 0}
                   onClick={() => selectSection(HELP_CHAPTERS[activeIndex - 1].id)}
-                  className="rounded-lg border border-[rgba(255,255,255,0.08)] px-3 py-2 text-[11px] text-[#858594] transition hover:border-[rgba(255,255,255,0.15)] hover:text-[#e0e0e9] disabled:pointer-events-none disabled:opacity-0"
+                  className="flex items-center gap-1.5 rounded-lg border border-[rgba(255,255,255,0.08)] px-3 py-2 text-[11px] text-[#858594] transition hover:border-[rgba(255,255,255,0.15)] hover:text-[#e0e0e9] disabled:pointer-events-none disabled:opacity-0"
                 >
-                  ← Previous
+                  <Icon name="chevron-left" size={12} />
+                  Previous
                 </button>
                 <span className="font-mono text-[9px] text-[#484855]">{activeIndex + 1} / {HELP_CHAPTERS.length}</span>
                 <button
                   type="button"
                   disabled={activeIndex === HELP_CHAPTERS.length - 1}
                   onClick={() => selectSection(HELP_CHAPTERS[activeIndex + 1].id)}
-                  className="rounded-lg border border-[rgba(124,110,246,0.22)] bg-[rgba(124,110,246,0.07)] px-3 py-2 text-[11px] text-[#aaa1f5] transition hover:border-[rgba(124,110,246,0.42)] hover:bg-[rgba(124,110,246,0.12)] disabled:pointer-events-none disabled:opacity-0"
+                  className="flex items-center gap-1.5 rounded-lg border border-[rgba(124,110,246,0.22)] bg-[rgba(124,110,246,0.07)] px-3 py-2 text-[11px] text-[#aaa1f5] transition hover:border-[rgba(124,110,246,0.42)] hover:bg-[rgba(124,110,246,0.12)] disabled:pointer-events-none disabled:opacity-0"
                 >
-                  Next →
+                  Next
+                  <Icon name="chevron-right" size={12} />
                 </button>
               </div>
             </article>

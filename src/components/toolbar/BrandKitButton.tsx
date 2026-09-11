@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useBrandColors } from '@/hooks/useBrandColors'
 import { BrandColorList } from '@/components/common/BrandColorList'
 import type { BrandColor } from '@/types'
+import { Icon } from '@/components/ui/Icon'
 
 export function BrandKitButton() {
   const [open, setOpen] = useState(false)
@@ -70,7 +71,7 @@ export function BrandKitButton() {
             ))}
           </span>
         ) : (
-          <span>🎨</span>
+          <Icon name="palette" size={13} />
         )}
         <span className="max-[1099px]:hidden">Brand Kit</span>
       </button>

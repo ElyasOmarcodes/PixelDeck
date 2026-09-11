@@ -6,6 +6,7 @@ import { ModalShell } from '@/components/ui/ModalShell'
 import { InlineEditableLabel } from '@/components/ui/InlineEditableLabel'
 import { FileUploadButton } from '@/components/ui/FileUploadButton'
 import { ProjectConflictError } from '@/store/storage/types'
+import { Icon } from '@/components/ui/Icon'
 
 
 interface ProjectsModalProps {
@@ -394,11 +395,11 @@ export function ProjectsModal({ open, onClose }: ProjectsModalProps) {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: 18,
+                      color: isActive ? '#c4b9fc' : '#8a86a0',
                       flexShrink: 0,
                     }}
                   >
-                    📸
+                    <Icon name="camera" size={18} />
                   </div>
 
                   {/* Name + meta */}
@@ -505,7 +506,7 @@ export function ProjectsModal({ open, onClose }: ProjectsModalProps) {
                         ((e.currentTarget as HTMLButtonElement).style.color = '#6b6b7a')
                       }
                     >
-                      ✎
+                      <Icon name="pencil" size={14} />
                     </button>
                     <button
                       title="Delete project"
@@ -526,7 +527,7 @@ export function ProjectsModal({ open, onClose }: ProjectsModalProps) {
                         ((e.currentTarget as HTMLButtonElement).style.color = '#6b6b7a')
                       }
                     >
-                      🗑
+                      <Icon name="trash" size={14} />
                     </button>
                   </div>
                 </div>

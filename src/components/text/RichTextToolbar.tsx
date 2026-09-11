@@ -5,6 +5,7 @@ import { getFontWeights } from '@/utils/fonts'
 import { fillToCss } from '@/utils/gradients'
 import { FillControl } from '@/components/properties/PropertyControls'
 import { toggleBoolPatch, type RichTextEditorApi } from './useRichTextEditor'
+import { Icon } from '@/components/ui/Icon'
 
 const pauseTemporal = () => useEditorStore.temporal.getState().pause()
 const resumeTemporal = () => useEditorStore.temporal.getState().resume()
@@ -117,9 +118,10 @@ export function RichTextToolbar({
           <button
             type="button"
             onClick={() => api.applyPatch({ fill: null })}
-            className="mt-2 text-[10px] text-[#6b6b7a] hover:text-[#e8e8f0] transition-colors"
+            className="mt-2 flex items-center gap-1 text-[10px] text-[#6b6b7a] hover:text-[#e8e8f0] transition-colors"
           >
-            ↺ Use layer fill
+            <Icon name="rotate-ccw" size={11} />
+            Use layer fill
           </button>
         </div>
       )}

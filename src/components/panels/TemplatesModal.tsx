@@ -7,6 +7,7 @@ import { downloadDataUrl } from '@/utils/export'
 import type { Template } from '@/types'
 import { ModalShell } from '@/components/ui/ModalShell'
 import { FileUploadButton } from '@/components/ui/FileUploadButton'
+import { Icon } from '@/components/ui/Icon'
 
 interface TemplatesModalProps {
   open: boolean
@@ -178,7 +179,7 @@ export function TemplatesModal({ open, onClose }: TemplatesModalProps) {
                 e.currentTarget.style.color = '#a0a0b0'
               }}
             >
-              <span style={{ fontSize: 11 }}>↑</span>
+              <Icon name="upload" size={12} />
               Import
             </button>
 
@@ -215,7 +216,7 @@ export function TemplatesModal({ open, onClose }: TemplatesModalProps) {
                 }
               }}
             >
-              <span style={{ fontSize: 11 }}>⬇</span>
+              <Icon name="download" size={12} />
               Export
             </button>
 
@@ -366,7 +367,7 @@ export function TemplatesModal({ open, onClose }: TemplatesModalProps) {
                   gap: 6,
                 }}
               >
-                <span>⬇</span>
+                <Icon name="download" size={13} />
                 Download .template.json
               </button>
             </div>
@@ -399,7 +400,7 @@ export function TemplatesModal({ open, onClose }: TemplatesModalProps) {
                 gap: 8,
               }}
             >
-              <span>⚠</span>
+              <Icon name="alert-triangle" size={13} />
               {importError}
               <button
                 onClick={() => setImportError(null)}
@@ -440,7 +441,7 @@ export function TemplatesModal({ open, onClose }: TemplatesModalProps) {
                 fontSize: 13,
               }}
             >
-              <div style={{ fontSize: 36, marginBottom: 12 }}>🗂</div>
+              <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center', color: '#4d4d60' }}><Icon name="template" size={34} strokeWidth={1.4} /></div>
               <p style={{ margin: '0 0 6px', color: '#a0a0b0', fontWeight: 500 }}>
                 No bundled templates yet
               </p>

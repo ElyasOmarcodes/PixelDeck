@@ -4,6 +4,7 @@ import { LocaleRichTextEditor } from '@/components/text/LocaleRichTextEditor'
 import { cellKey, type CellStatus, type LocalizableRow } from './types'
 import type { SlideBackgroundPreview } from './helpers'
 import { truncate } from './helpers'
+import { Icon } from '@/components/ui/Icon'
 
 export interface TextOverrideCellProps {
   row: LocalizableRow
@@ -83,7 +84,7 @@ export function TextOverrideCell({
   if (!isDefaultLocale && cellStatus === 'error') {
     return (
       <div className="min-h-[80px] rounded-xl border border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.06)] px-4 py-3 space-y-2 mb-3">
-        <div className="text-xs text-[#f87171]">⚠ Translation failed</div>
+        <div className="flex items-center gap-1.5 text-xs text-[#f87171]"><Icon name="alert-triangle" size={12} />Translation failed</div>
         {cellError && (
           <div className="text-[10px] text-[#f87171]/70 truncate" title={cellError}>
             {cellError}
@@ -126,10 +127,10 @@ export function TextOverrideCell({
               onClick={onAiTranslate}
               className="rounded-lg border border-[rgba(124,110,246,0.4)] bg-[rgba(124,110,246,0.1)] px-2.5 py-1 text-xs text-[#c5befd] hover:bg-[rgba(124,110,246,0.2)] transition"
             >
-              ✦ AI
+              <span className="flex items-center gap-1"><Icon name="sparkles" size={11} />AI</span>
             </button>
           )}
-          <span className="text-xs text-amber-400/70">⚠ Missing</span>
+          <span className="flex items-center gap-1 text-xs text-amber-400/70"><Icon name="alert-triangle" size={11} />Missing</span>
         </div>
       </div>
     )
@@ -156,7 +157,7 @@ export function TextOverrideCell({
       )}
       <div className="relative">
         {cellStatus === 'done' && (
-          <div className="text-[10px] text-emerald-400 mb-1">✓ AI translated</div>
+          <div className="mb-1 flex items-center gap-1 text-[10px] text-emerald-400"><Icon name="check" size={10} strokeWidth={2.4} />AI translated</div>
         )}
         <LocaleRichTextEditor
           baseLayer={baseLayer}
@@ -177,10 +178,11 @@ export function TextOverrideCell({
         {/* Problem visibility: formatting state */}
         {(formattingLostByAi || formattingMissing) && (
           <div className="mt-2 flex items-start gap-1.5 rounded-lg border border-[rgba(245,158,11,0.3)] bg-[rgba(245,158,11,0.07)] px-2 py-1.5">
+            <Icon name="alert-triangle" size={11} className="mt-0.5 text-[#fbbf24]" />
             <span className="text-[10px] leading-relaxed text-[#fbbf24]">
               {formattingLostByAi
-                ? '⚠ AI could not preserve the source formatting — click the text and re-apply it'
-                : '⚠ The source has styled words not applied here — click the text to style it'}
+                ? 'AI could not preserve the source formatting — click the text and re-apply it'
+                : 'The source has styled words not applied here — click the text to style it'}
             </span>
           </div>
         )}
@@ -197,7 +199,7 @@ export function TextOverrideCell({
               className="text-[10px] text-[#9d90f8] hover:text-white transition"
               title="Re-translate with AI"
             >
-              ✦ Re-translate
+              <span className="flex items-center gap-1"><Icon name="sparkles" size={10} />Re-translate</span>
             </button>
           )}
           {!isDefaultLocale && (

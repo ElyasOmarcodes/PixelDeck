@@ -6,6 +6,7 @@ import { useAssetStore } from '@/store/assets'
 import { fileToDataUrl } from '@/utils/files'
 import type { AssetEntry } from '@/store/assets'
 import type { Layer } from '@/types'
+import { Icon } from '@/components/ui/Icon'
 
 interface AssetsSectionProps {
   /** Forwarded ref so the parent's insert toolbar can trigger image import */
@@ -334,7 +335,7 @@ export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLa
             className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6b6b7a] hover:text-[#e8e8f0]"
             title={assetsCollapsed ? 'Show assets' : 'Minimize assets'}
           >
-            <span className="tracking-normal">{assetsCollapsed ? '▸' : '▾'}</span>
+            <Icon name={assetsCollapsed ? 'chevron-right' : 'chevron-down'} size={12} />
             Assets
           </button>
           <div className="flex items-center gap-1">
@@ -347,7 +348,7 @@ export function AssetsSection({ imageInputRef, selectedLayer, addImage, updateLa
               className="rounded px-1.5 py-0.5 text-[10px] text-[#8f90a3] hover:bg-[rgba(255,255,255,0.06)] hover:text-white disabled:opacity-35 disabled:cursor-not-allowed"
               title="Open large asset browser"
             >
-              ⛶
+              <Icon name="maximize" size={12} />
             </button>
           </div>
         </div>

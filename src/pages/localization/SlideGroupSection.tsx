@@ -7,6 +7,7 @@ import { ImageOverrideCell } from './ImageOverrideCell'
 import { isOverrideComplete, getPlatformBadge, getSlideBackgroundPreview } from './helpers'
 import type { CellKey, CellStatus, LocalizableRow } from './types'
 import { cellKey } from './types'
+import { Icon } from '@/components/ui/Icon'
 
 export interface SlideGroupSectionProps {
   slideGroup: SlideGroup
@@ -81,7 +82,7 @@ export function SlideGroupSection({
         className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition hover:bg-white/[0.03]"
       >
         <div className="flex items-center gap-3">
-          <span className="text-sm text-[#d5d2eb]">{collapsed ? '▸' : '▾'}</span>
+          <span className="text-[#d5d2eb]"><Icon name={collapsed ? 'chevron-right' : 'chevron-down'} size={15} /></span>
           <div>
             <div className="text-xl text-[#f2efff]" style={{ fontFamily: 'Iowan Old Style, Palatino Linotype, serif' }}>
               {slideGroup.name}
@@ -145,7 +146,7 @@ export function SlideGroupSection({
                             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#111118] text-sm font-semibold mt-0.5"
                             style={{ color: row.layerType === 'text' ? '#c9c3ff' : '#d9d9e6' }}
                           >
-                            {row.layerType === 'text' ? 'T' : row.layerType === 'phone' ? '📱' : '🖼'}
+                            <Icon name={row.layerType === 'text' ? 'text' : row.layerType === 'phone' ? 'phone' : 'image'} size={15} />
                           </div>
                           <div className="min-w-0 flex-1">
                             <button

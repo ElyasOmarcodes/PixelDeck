@@ -10,6 +10,7 @@ import { ToggleSwitch } from '@/components/ui/ToggleSwitch'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { FileUploadButton } from '@/components/ui/FileUploadButton'
 import { computePhoneFitScale, PHONE_MODELS, getPhoneSpec } from '@/assets/mockups/specs'
+import { Icon, type IconName } from '@/components/ui/Icon'
 import {
   inputCls,
   labelCls,
@@ -48,9 +49,10 @@ function LocaleScreenshotRow({
           <button
             type="button"
             onClick={onClear}
-            className="text-[10px] text-[#f87171] hover:text-[#fca5a5] transition-colors shrink-0"
+            aria-label="Clear screenshot"
+            className="text-[#f87171] hover:text-[#fca5a5] transition-colors shrink-0"
           >
-            ✕
+            <Icon name="close" size={12} strokeWidth={2.2} />
           </button>
         </>
       ) : (
@@ -152,12 +154,12 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
         const fh = spec.frameHeight * layer.scale
         const cx = (slideWidth - fw) / 2
 
-        const presets = [
+        const presets: { label: string; icon?: IconName; patch: Partial<PhoneLayer> }[] = [
           { label: 'Center',   patch: { x: cx, y: (slideHeight - fh) / 2, rotation: 0 } },
           { label: 'Hero',     patch: { x: cx, y: Math.round(slideHeight * 0.05), rotation: 0 } },
           { label: 'Bleed',    patch: { x: cx, y: Math.round(slideHeight * 0.38), rotation: 0 } },
-          { label: '↺ Tilt',  patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: -10 } },
-          { label: 'Tilt ↻',  patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: 10 } },
+          { label: 'Tilt L',   icon: 'rotate-ccw', patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: -10 } },
+          { label: 'Tilt R',   icon: 'rotate-cw',  patch: { x: cx, y: Math.round(slideHeight * 0.18), rotation: 10 } },
         ]
 
         return (
@@ -168,9 +170,10 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
                 <button
                   key={preset.label}
                   type="button"
-                  onClick={() => upd(preset.patch as Partial<PhoneLayer>)}
-                  className="rounded border border-[rgba(255,255,255,0.1)] px-1 py-1.5 text-[10px] text-[#8f90a3] hover:border-[rgba(124,110,246,0.5)] hover:text-[#e8e8f0] hover:bg-[rgba(255,255,255,0.04)] transition-colors leading-tight text-center"
+                  onClick={() => upd(preset.patch)}
+                  className="flex flex-col items-center gap-0.5 rounded border border-[rgba(255,255,255,0.1)] px-1 py-1.5 text-[10px] text-[#8f90a3] hover:border-[rgba(124,110,246,0.5)] hover:text-[#e8e8f0] hover:bg-[rgba(255,255,255,0.04)] transition-colors leading-tight text-center"
                 >
+                  {preset.icon && <Icon name={preset.icon} size={12} />}
                   {preset.label}
                 </button>
               ))}
@@ -227,8 +230,8 @@ export function PhoneProperties({ layer }: { layer: PhoneLayer }) {
                 <SegmentedControl
                   value={layer.statusBarTheme ?? 'dark'}
                   options={[
-                    { value: 'dark', label: '🌙 Dark' },
-                    { value: 'light', label: '☀️ Light' },
+                    { value: 'dark', label: <span className="flex items-center justify-center gap-1.5"><Icon name="moon" size={13} />Dark</span> },
+                    { value: 'light', label: <span className="flex items-center justify-center gap-1.5"><Icon name="sun" size={13} />Light</span> },
                   ]}
                   onChange={(t) => upd({ statusBarTheme: t })}
                   className="grid grid-cols-2 gap-2"

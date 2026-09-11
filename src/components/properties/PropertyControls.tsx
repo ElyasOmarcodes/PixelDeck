@@ -6,6 +6,7 @@ import { useBrandColors } from '@/hooks/useBrandColors'
 import { isBrandToken, parseBrandToken, resolveBrandColor, toBrandToken } from '@/utils/brandColors'
 import { fillToCss } from '@/utils/gradients'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { Icon } from '@/components/ui/Icon'
 
 const inputCls =
   'bg-[#0f0f13] border border-[rgba(255,255,255,0.1)] rounded px-2 py-1 text-sm text-[#e8e8f0] w-full focus:outline-none focus:border-[rgba(124,110,246,0.5)]'
@@ -183,9 +184,9 @@ export function ColorField({
             type="button"
             title="Clear brand binding"
             onClick={() => onChange(safeValue)}
-            className="text-[10px] px-1.5 py-0.5 rounded border border-[rgba(124,110,246,0.4)] text-[#9d90f8] hover:text-white hover:border-[#7c6ef6] transition-colors"
+            className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border border-[rgba(124,110,246,0.4)] text-[#9d90f8] hover:text-white hover:border-[#7c6ef6] transition-colors"
           >
-            ✕ {activeBrand.name}
+            <Icon name="close" size={10} strokeWidth={2.4} /> {activeBrand.name}
           </button>
         )}
         <AddBrandColorButton currentColor={safeValue} />
@@ -287,9 +288,9 @@ function AddBrandColorButton({ currentColor }: { currentColor: string }) {
         type="button"
         title="Save as brand color"
         onClick={() => { setAdding(true); setName('') }}
-        className="text-[10px] px-1.5 py-0.5 rounded border border-dashed border-[rgba(255,255,255,0.2)] text-[#6b6b7a] hover:text-[#e8e8f0] hover:border-[rgba(255,255,255,0.4)] transition-colors"
+        className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border border-dashed border-[rgba(255,255,255,0.2)] text-[#6b6b7a] hover:text-[#e8e8f0] hover:border-[rgba(255,255,255,0.4)] transition-colors"
       >
-        ＋ Brand
+        <Icon name="plus" size={10} strokeWidth={2.4} /> Brand
       </button>
     )
   }
@@ -315,16 +316,18 @@ function AddBrandColorButton({ currentColor }: { currentColor: string }) {
         type="button"
         onClick={() => { if (name.trim()) { addBrandColor(name.trim(), currentColor); setAdding(false) } }}
         disabled={!name.trim()}
-        className="text-[10px] px-1.5 py-0.5 rounded bg-[#7c6ef6] text-white disabled:opacity-40"
+        aria-label="Save brand color"
+        className="flex items-center px-1.5 py-1 rounded bg-[#7c6ef6] text-white disabled:opacity-40"
       >
-        ✓
+        <Icon name="check" size={11} strokeWidth={2.6} />
       </button>
       <button
         type="button"
         onClick={() => setAdding(false)}
-        className="text-[10px] text-[#6b6b7a] hover:text-[#e8e8f0]"
+        aria-label="Cancel"
+        className="flex items-center text-[#6b6b7a] hover:text-[#e8e8f0]"
       >
-        ✕
+        <Icon name="close" size={12} strokeWidth={2.2} />
       </button>
     </div>
   )

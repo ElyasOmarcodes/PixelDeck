@@ -3,6 +3,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useEditorStore } from '@/store'
 import { BASE_CANVAS_FORMAT, getProjectBaseFormat, LOCALE_DELTA_FIELDS } from '@/utils/canvasFormats'
 import type { Layer, GroupLayer } from '@/types'
+import { Icon } from '@/components/ui/Icon'
 
 function findLayerById(layers: Layer[], id: string): Layer | null {
   for (const layer of layers) {
@@ -139,7 +140,7 @@ function Dot({
       <button
         type="button"
         title={title}
-        className="text-[10px] cursor-pointer ml-1 leading-none transition-colors"
+        className="cursor-pointer ml-1 leading-none transition-colors"
         style={{ color }}
         onMouseEnter={(e) => { e.currentTarget.style.color = hoverColor }}
         onMouseLeave={(e) => { e.currentTarget.style.color = color }}
@@ -148,7 +149,7 @@ function Dot({
           setMenuOpen((prev) => !prev)
         }}
       >
-        ●
+        <Icon name="dot" size={8} />
       </button>
       {menuOpen && (
         <div
@@ -198,13 +199,13 @@ function FormatOverrideDot({
       <button
         type="button"
         title="Format override — click to manage"
-        className="text-[10px] cursor-pointer ml-1 leading-none text-[#f59e0b] hover:text-[#fbbf24] transition-colors"
+        className="cursor-pointer ml-1 leading-none text-[#f59e0b] hover:text-[#fbbf24] transition-colors"
         onClick={(e) => {
           e.stopPropagation()
           setMenuOpen((prev) => !prev)
         }}
       >
-        ●
+        <Icon name="dot" size={8} />
       </button>
       {menuOpen && (
         <div

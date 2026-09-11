@@ -1,4 +1,5 @@
 import { useEffect, type CSSProperties, type ReactNode } from 'react'
+import { Icon } from '@/components/ui/Icon'
 
 function shouldCloseModalForKey(key: string): boolean {
   return key === 'Escape'
@@ -47,7 +48,7 @@ export function ModalShell({
   closeButtonClassName = 'absolute top-4 right-4 z-10 text-[#6b6b7a] hover:text-[#e8e8f0] transition-colors text-lg w-7 h-7 flex items-center justify-center rounded hover:bg-[rgba(255,255,255,0.06)]',
   closeButtonStyle,
   closeLabel = 'Close modal',
-  closeGlyph = '✕',
+  closeGlyph = <Icon name="close" size={15} />,
   showCloseButton = true,
   closeOnEscape = true,
   onEscape,

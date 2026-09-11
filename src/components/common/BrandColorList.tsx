@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useEditorStore } from '@/store'
 import { useBrandColors } from '@/hooks/useBrandColors'
 import type { BrandColor } from '@/types'
+import { Icon } from '@/components/ui/Icon'
 
 const inputCls = 'bg-[#0f0f13] border border-[rgba(255,255,255,0.1)] rounded px-2 py-1 text-sm text-[#e8e8f0] w-full focus:outline-none focus:border-[rgba(124,110,246,0.5)]'
 
@@ -41,9 +42,10 @@ export function BrandColorList({ compact = false }: BrandColorListProps) {
         <button
           type="button"
           onClick={() => { setAdding((v) => !v); setEditingId(null) }}
-          className={`text-xs text-[#7c6ef6] hover:text-[#9d90f8] transition-colors ${compact ? '' : 'ml-auto'}`}
+          className={`flex items-center gap-1 text-xs text-[#7c6ef6] hover:text-[#9d90f8] transition-colors ${compact ? '' : 'ml-auto'}`}
         >
-          {adding ? '✕' : '＋ Add'}
+          <Icon name={adding ? 'close' : 'plus'} size={12} strokeWidth={2.2} />
+          {adding ? '' : 'Add'}
         </button>
       </div>
 
@@ -86,7 +88,7 @@ export function BrandColorList({ compact = false }: BrandColorListProps) {
       {/* Empty state */}
       {brandColors.length === 0 && !adding && (
         <p className="text-xs text-[#4a4a5a] py-1">
-          No colors yet. Click ＋ Add to create your first brand color.
+          No colors yet. Use the Add button to create your first brand color.
         </p>
       )}
 
@@ -110,7 +112,7 @@ export function BrandColorList({ compact = false }: BrandColorListProps) {
                 className="text-xs text-[#4a4a5a] hover:text-[#f87171] transition-colors shrink-0 ml-1"
                 aria-label={`Delete brand color ${bc.name}`}
               >
-                ✕
+                <Icon name="close" size={12} strokeWidth={2.2} />
               </button>
             </div>
             {editingId === bc.id && (

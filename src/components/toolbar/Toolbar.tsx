@@ -5,6 +5,7 @@ import { notifyProjectConflict, useProjectsStore } from '@/store/projects'
 import { ProjectConflictError } from '@/store/storage/types'
 import { BrandKitButton } from '@/components/toolbar/BrandKitButton'
 import { Logo } from '@/components/toolbar/Logo'
+import { Icon } from '@/components/ui/Icon'
 
 // Lazy-load heavy modals — only fetched when the user opens them for the first time.
 const ProjectsModal = lazy(() =>
@@ -196,7 +197,7 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
           ;(e.currentTarget as HTMLButtonElement).style.color = '#a0a0b0'
         }}
       >
-        <span className="min-[1100px]:hidden">▦</span>
+        <Icon name="grid" size={13} className="min-[1100px]:hidden" />
         <span className="max-[1099px]:hidden">Projects</span>
       </button>
 
@@ -226,7 +227,7 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
           ;(e.currentTarget as HTMLButtonElement).style.color = '#a0a0b0'
         }}
       >
-        <span>🗂</span>
+        <Icon name="template" size={13} />
         <span className="max-[1099px]:hidden">Templates</span>
       </button>
 
@@ -234,8 +235,9 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
 
       {/* Save indicator */}
       {saveLabel && (
-        <span style={{ fontSize: 11, color: '#6ee7b7', opacity: 0.8 }}>
-          {saveLabel === 'saving' ? '⏳ Saving…' : '✓ Saved'}
+        <span className="flex items-center gap-1" style={{ fontSize: 11, color: '#6ee7b7', opacity: 0.85 }}>
+          <Icon name={saveLabel === 'saving' ? 'spinner' : 'check'} size={11} strokeWidth={2.2} />
+          {saveLabel === 'saving' ? 'Saving…' : 'Saved'}
         </span>
       )}
 
@@ -250,7 +252,7 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
           className="w-7 h-7 flex items-center justify-center text-sm rounded hover:bg-[rgba(255,255,255,0.06)] disabled:opacity-30 disabled:cursor-not-allowed"
           style={{ color: canUndo ? '#e8e8f0' : '#3a3a4a' }}
         >
-          ↩
+          <Icon name="undo" size={15} />
         </button>
         <button
           onClick={() => redo()}
@@ -259,7 +261,7 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
           className="w-7 h-7 flex items-center justify-center text-sm rounded hover:bg-[rgba(255,255,255,0.06)] disabled:opacity-30 disabled:cursor-not-allowed"
           style={{ color: canRedo ? '#e8e8f0' : '#3a3a4a' }}
         >
-          ↪
+          <Icon name="redo" size={15} />
         </button>
       </div>
 
@@ -271,9 +273,10 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
           <button
             onClick={() => createGroup(selectedLayerIds)}
             title="Group selected layers"
-            className="text-xs text-[#e8e8f0] px-2.5 py-1 rounded border border-[rgba(124,110,246,0.5)] bg-[rgba(124,110,246,0.15)] hover:bg-[rgba(124,110,246,0.25)] transition-colors"
+            className="flex items-center gap-1.5 text-xs text-[#e8e8f0] px-2.5 py-1 rounded border border-[rgba(124,110,246,0.5)] bg-[rgba(124,110,246,0.15)] hover:bg-[rgba(124,110,246,0.25)] transition-colors"
           >
-            ⊞ Group ({selectedLayerIds.length})
+            <Icon name="group" size={13} />
+            Group ({selectedLayerIds.length})
           </button>
         )}
       </div>
@@ -285,22 +288,22 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
         <button
           onClick={() => setSettingsOpen(true)}
           title="Open settings"
-          className="text-xs text-[#e8e8f0] px-3 py-1.5 rounded border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+          className="flex items-center gap-1.5 text-xs text-[#e8e8f0] px-3 py-1.5 rounded border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
         >
-          <span>⚙</span><span className="max-[1099px]:hidden">Settings</span>
+          <Icon name="settings" size={13} /><span className="max-[1099px]:hidden">Settings</span>
         </button>
 
         <button
           onClick={() => onSetMode(mode === 'localization' ? 'editor' : 'localization')}
           title="Manage translations inside the editor flow"
-          className={`text-xs px-3 py-1.5 rounded border transition-colors ${
+          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded border transition-colors ${
             mode === 'localization'
               ? 'text-white bg-[rgba(124,110,246,0.22)] border-[rgba(124,110,246,0.45)]'
               : 'text-[#e8e8f0] border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.05)]'
           }`}
         >
+          <Icon name="languages" size={13} />
           <span className="max-[1099px]:hidden">{mode === 'localization' ? 'Back to Design' : 'Localization'}</span>
-          <span className="min-[1100px]:hidden">◉</span>
         </button>
 
         <button
@@ -308,11 +311,7 @@ export function Toolbar({ mode, onSetMode }: ToolbarProps) {
           title="Help & keyboard shortcuts"
           className="flex items-center gap-1.5 text-xs text-[#a0a0b0] px-3 py-1.5 rounded border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#e8e8f0] transition-colors"
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
+          <Icon name="help" size={13} strokeWidth={2} />
           <span className="max-[1099px]:hidden">Help</span>
         </button>
 

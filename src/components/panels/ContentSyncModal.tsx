@@ -5,6 +5,7 @@ import { useEditorStore } from '@/store'
 import { planContentSync } from '@/utils/contentSync'
 import { FORMAT_FAMILY_LABELS, selectProjectFamilies } from '@/utils/canvasFormats'
 import { resolveContentSyncSourceGroup } from '@/store/slices/slideGroupSlice'
+import { Icon } from '@/components/ui/Icon'
 
 interface ContentSyncModalProps { open: boolean; onClose: () => void }
 
@@ -42,7 +43,7 @@ export function ContentSyncModal({ open, onClose }: ContentSyncModalProps) {
     {candidates.length > 1 && <label className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6b6b7a]">Bring content from<select value={selectedFamily} onChange={(event) => setSourceFamily(event.target.value as typeof candidates[number])} className="mt-2 w-full rounded border border-[rgba(255,255,255,0.1)] bg-[#0f0f13] px-2 py-1.5 text-xs font-normal normal-case tracking-normal text-[#e8e8f0] focus:outline-none">{candidates.map((family) => <option key={family} value={family}>{FORMAT_FAMILY_LABELS[family]}</option>)}</select></label>}
     {sourceGroup && <p className="mt-4 text-sm leading-6 text-[#b7b7c5]">Pull from <span className="font-medium text-[#f4f4f7]">{FORMAT_FAMILY_LABELS[selectedFamily!]} → “{sourceGroup.name}”</span></p>}
     {!sourceGroup && <p className="mt-4 text-[11px] text-[#d7c08b]">This family does not have a matching screen at this position.</p>}
-    {updates.length > 0 && <div className="mt-4 max-h-52 overflow-y-auto rounded-lg border border-[rgba(255,255,255,0.08)] bg-[#0f0f13]">{updates.map((entry) => <div key={entry.path.join('.')} className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] px-3 py-2 text-xs last:border-b-0"><span className="min-w-0 flex-1 truncate text-[#e8e8f0]">{entry.layerName}</span><span className="text-[#6b6b7a]">←</span><span className="min-w-0 flex-1 truncate text-right text-[#a6a7b8]">{entry.preview ?? entry.changedKeys.join(', ')}</span></div>)}</div>}
+    {updates.length > 0 && <div className="mt-4 max-h-52 overflow-y-auto rounded-lg border border-[rgba(255,255,255,0.08)] bg-[#0f0f13]">{updates.map((entry) => <div key={entry.path.join('.')} className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] px-3 py-2 text-xs last:border-b-0"><span className="min-w-0 flex-1 truncate text-[#e8e8f0]">{entry.layerName}</span><span className="text-[#6b6b7a]"><Icon name="arrow-left" size={12} /></span><span className="min-w-0 flex-1 truncate text-right text-[#a6a7b8]">{entry.preview ?? entry.changedKeys.join(', ')}</span></div>)}</div>}
     {(plan?.skippedCount ?? 0) > 0 && <p className="mt-3 text-[11px] text-[#6b6b7a]">{plan!.skippedCount} layer{plan!.skippedCount === 1 ? '' : 's'} skipped — different type or structure</p>}
   </ModalShell>
 }

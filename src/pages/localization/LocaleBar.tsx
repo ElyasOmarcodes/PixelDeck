@@ -1,6 +1,7 @@
 import type { RefObject } from 'react'
 import { getLanguageName } from '@/utils/locale'
 import { LanguagePopover } from './LanguagePopover'
+import { Icon } from '@/components/ui/Icon'
 
 export interface LocaleBarProps {
   locales: string[]
@@ -120,17 +121,19 @@ export function LocaleBar({
                 type="button"
                 onClick={() => onPreview(activeLocale)}
                 title={`Preview slides in ${getLanguageName(activeLocale)}`}
-                className="rounded-full border border-[#7c6ef6]/40 bg-[#7c6ef6]/10 px-4 py-2 text-sm font-medium text-[#cbbfff] transition hover:border-[#7c6ef6]/70 hover:bg-[#7c6ef6]/20 hover:text-white"
+                className="flex items-center gap-2 rounded-full border border-[#7c6ef6]/40 bg-[#7c6ef6]/10 px-4 py-2 text-sm font-medium text-[#cbbfff] transition hover:border-[#7c6ef6]/70 hover:bg-[#7c6ef6]/20 hover:text-white"
               >
-                ▶ Preview
+                <Icon name="play" size={12} />
+                Preview
               </button>
             )}
             <button
               type="button"
               onClick={onBack}
-              className="rounded-full border border-white/10 bg-white/4 px-5 py-2 text-sm font-medium text-[#d7d7e3] transition hover:border-[#7c6ef6]/50 hover:bg-[#7c6ef6]/10 hover:text-white"
+              className="flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-5 py-2 text-sm font-medium text-[#d7d7e3] transition hover:border-[#7c6ef6]/50 hover:bg-[#7c6ef6]/10 hover:text-white"
             >
-              ← Back to Editor
+              <Icon name="arrow-left" size={14} />
+              Back to Editor
             </button>
           </div>
         </div>

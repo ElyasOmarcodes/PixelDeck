@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { RefObject } from 'react'
 import { LANGUAGES } from '@/utils/locale'
+import { Icon } from '@/components/ui/Icon'
 
 // ─── Language Combobox ────────────────────────────────────────────────────────
 
@@ -81,7 +82,7 @@ function LanguageCombobox({
             >
               <span>{lang.name}</span>
               <span className={`text-xs font-mono ${disabled ? 'text-[#3a3a4a]' : already ? 'text-[#9d90f8]' : 'text-[#6b6b7a]'}`}>
-                {already ? '✓ ' : ''}{lang.code}
+                <span className="flex items-center gap-1">{already && <Icon name="check" size={10} strokeWidth={2.4} />}{lang.code}</span>
               </span>
             </button>
           )
@@ -92,7 +93,7 @@ function LanguageCombobox({
             onClick={() => handleSelect(customCodeValid)}
             className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[#9d90f8] hover:bg-[#7c6ef6]/10 hover:text-white transition"
           >
-            <span className="text-[#7c6ef6]">＋</span>
+            <span className="text-[#7c6ef6]"><Icon name="plus" size={12} strokeWidth={2.4} /></span>
             Use custom code: <span className="font-mono">{customCodeValid}</span>
           </button>
         )}

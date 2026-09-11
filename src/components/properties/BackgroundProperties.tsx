@@ -21,6 +21,7 @@ import {
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch'
 import { FileUploadButton } from '@/components/ui/FileUploadButton'
+import { Icon } from '@/components/ui/Icon'
 
 const ACCENT_PRESETS = [
   { cx: 50, cy: 20, rx: 500, ry: 450 },
@@ -78,7 +79,10 @@ export function BackgroundProperties({ layer }: { layer: BackgroundLayer }) {
         <label className={labelCls}>Background Type</label>
         <SegmentedControl
           value={hasImage ? 'image' : 'gradient'}
-          options={[{ value: 'gradient', label: '🎨 Gradient' }, { value: 'image', label: '🖼 Image' }]}
+          options={[
+            { value: 'gradient', label: <span className="flex items-center justify-center gap-1.5"><Icon name="palette" size={13} />Gradient</span> },
+            { value: 'image', label: <span className="flex items-center justify-center gap-1.5"><Icon name="image" size={13} />Image</span> },
+          ]}
           onChange={(mode) => {
                 if (mode === 'image') bgImageInputRef.current?.click()
                 else upd({ imageDataUrl: undefined })

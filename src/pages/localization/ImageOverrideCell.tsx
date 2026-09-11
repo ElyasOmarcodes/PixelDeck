@@ -1,6 +1,7 @@
 import { effectiveLocalizationMode } from '@/utils/locale'
 import type { LocalizableRow } from './types'
 import { getFileLabel } from './helpers'
+import { Icon } from '@/components/ui/Icon'
 
 export interface ImageOverrideCellProps {
   row: LocalizableRow
@@ -127,7 +128,7 @@ export function ImageOverrideCell({
           >
             + Upload
           </button>
-          <span className="text-xs text-amber-400/70">⚠ Missing</span>
+          <span className="flex items-center gap-1 text-xs text-amber-400/70"><Icon name="alert-triangle" size={11} />Missing</span>
         </div>
       )}
     </div>

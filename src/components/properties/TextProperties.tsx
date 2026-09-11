@@ -13,6 +13,7 @@ import {
   resumeTemporal,
 } from '@/components/properties/panelConstants'
 import { LayerTextToolbar } from '@/components/text/LayerTextToolbar'
+import { Icon } from '@/components/ui/Icon'
 
 // ─── FontPicker ───────────────────────────────────────────────────────────────
 
@@ -185,7 +186,7 @@ function FontPicker({ value, customFonts, onChange }: FontPickerProps) {
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setActiveIdx(-1) }}
-              placeholder="Search fonts… (↑↓ to preview)"
+              placeholder="Search fonts…"
               className={`${inputCls} text-xs`}
             />
           </div>
@@ -295,7 +296,7 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
 
       {/* ── Text styling toolbar — always visible ── */}
       <div className={`${panelSectionCls} !border-[rgba(124,110,246,0.35)]`}>
-        <label className={labelCls}>✏️ Text Styling</label>
+        <label className={`${labelCls} flex items-center gap-1.5`}><Icon name="text" size={12} />Text Styling</label>
         {editingThis ? (
           // Canvas editor is active: it portals RichTextToolbar into this slot
           <div id="rich-text-toolbar-slot" />
@@ -393,9 +394,9 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
         <label className={labelCls}>Alignment</label>
         <div className="grid grid-cols-3 gap-2">
           {([
-            { value: 'left',   label: '⬱ Left' },
-            { value: 'center', label: '≡ Center' },
-            { value: 'right',  label: '⬲ Right' },
+            { value: 'left',   label: 'Left',   icon: 'align-left' },
+            { value: 'center', label: 'Center', icon: 'align-center' },
+            { value: 'right',  label: 'Right',  icon: 'align-right' },
           ] as const).map((item) => (
             <button
               key={item.value}
@@ -407,7 +408,10 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
                   : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:bg-[rgba(255,255,255,0.06)] hover:text-[#e8e8f0]'
               }`}
             >
-              {item.label}
+              <span className="flex items-center justify-center gap-1.5">
+                <Icon name={item.icon} size={13} />
+                {item.label}
+              </span>
             </button>
           ))}
         </div>
@@ -418,9 +422,9 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
             <label className={labelCls}>Vertical Align</label>
             <div className="grid grid-cols-3 gap-2">
               {([
-                { value: 'top',    label: '⤒ Top' },
-                { value: 'middle', label: '☰ Middle' },
-                { value: 'bottom', label: '⤓ Bottom' },
+                { value: 'top',    label: 'Top',    icon: 'align-top' },
+                { value: 'middle', label: 'Middle', icon: 'align-middle' },
+                { value: 'bottom', label: 'Bottom', icon: 'align-bottom' },
               ] as const).map((item) => (
                 <button
                   key={item.value}
@@ -432,7 +436,10 @@ export function TextProperties({ layer }: { layer: TextLayer }) {
                       : 'border-[rgba(255,255,255,0.1)] text-[#6b6b7a] hover:bg-[rgba(255,255,255,0.06)] hover:text-[#e8e8f0]'
                   }`}
                 >
-                  {item.label}
+                  <span className="flex items-center justify-center gap-1.5">
+                    <Icon name={item.icon} size={13} />
+                    {item.label}
+                  </span>
                 </button>
               ))}
             </div>

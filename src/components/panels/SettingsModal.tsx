@@ -6,6 +6,7 @@ import { BrandColorList } from '@/components/common/BrandColorList'
 import { ModalShell } from '@/components/ui/ModalShell'
 import { NumberInput } from '@/components/ui/NumberInput'
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch'
+import { Icon, type IconName } from '@/components/ui/Icon'
 
 interface SettingsModalProps {
   open: boolean
@@ -23,14 +24,14 @@ type Tab = 'ai' | 'brand' | 'pano'
 interface TabMeta {
   id: Tab
   label: string
-  icon: string
+  icon: IconName
   section: 'GLOBAL' | 'PROJECT'
 }
 
 const TABS: TabMeta[] = [
-  { id: 'ai', label: 'AI', icon: '🤖', section: 'GLOBAL' },
-  { id: 'brand', label: 'Brand', icon: '🎨', section: 'PROJECT' },
-  { id: 'pano', label: 'Pano', icon: '🖼', section: 'PROJECT' },
+  { id: 'ai', label: 'AI', icon: 'ai', section: 'GLOBAL' },
+  { id: 'brand', label: 'Brand', icon: 'palette', section: 'PROJECT' },
+  { id: 'pano', label: 'Pano', icon: 'image', section: 'PROJECT' },
 ]
 
 // ─── Brand tab content ────────────────────────────────────────────────────────
@@ -190,7 +191,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                         : 'text-[#6b6b7a] hover:text-[#e8e8f0] hover:bg-[rgba(255,255,255,0.05)]'
                     }`}
                   >
-                    <span>{t.icon}</span>
+                    <Icon name={t.icon} size={14} />
                     <span>{t.label}</span>
                   </button>
                 ))}
