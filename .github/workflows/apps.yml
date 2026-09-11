@@ -1,0 +1,269 @@
+name: Apps · Desktop & Android
+
+# Builds installable PixelDeck apps from the same web bundle the site uses:
+#
+#   Desktop → Tauri v2. The webview comes from the OS, so the installers are a
+#             few MB instead of the ~100 MB an Electron bundle would cost.
+#   Android → Capacitor. The `android/` Gradle project is generated here rather
+#             than committed, so the repository stays small and always matches
+#             the pinned Capacitor version.
+#
+# Every run uploads artifacts. Pushing a v* tag also attaches them to the
+# GitHub release.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      desktop:
+        description: 'Build desktop installers'
+        type: boolean
+        default: true
+      android:
+        description: 'Build the Android APK'
+        type: boolean
+        default: true
+  # Keep the app packaging honest on PRs that touch it, without spending CI
+  # minutes on every unrelated change.
+  pull_request:
+    paths:
+      - 'src-tauri/**'
+      - 'capacitor.config.json'
+      - 'scripts/shrink-android-release.mjs'
+      - '.github/workflows/apps.yml'
+
+concurrency:
+  group: apps-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22.x'
+  # Smaller, faster Cargo builds in CI.
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: '0'
+  RUST_BACKTRACE: '1'
+
+jobs:
+  # ── Desktop: Windows / macOS / Linux ────────────────────────────────────────
+  desktop:
+    if: github.event_name != 'workflow_dispatch' || inputs.desktop
+    name: Desktop · ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            label: Linux x64
+            # AppImage is deliberately excluded: it bundles webkit2gtk and
+            # weighs ~90 MB, against ~6 MB for the deb.
+            bundles: deb,rpm
+            artifact: pixeldeck-linux-x64
+          - os: windows-latest
+            label: Windows x64
+            bundles: nsis
+            artifact: pixeldeck-windows-x64
+          - os: macos-latest
+            label: macOS universal
+            bundles: dmg
+            # One dmg that runs on both Apple Silicon and Intel.
+            target: universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+            artifact: pixeldeck-macos-universal
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install Linux webview dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            librsvg2-dev \
+            patchelf \
+            libayatana-appindicator3-dev
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets || '' }}
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            src-tauri/target
+          key: cargo-${{ matrix.os }}-${{ hashFiles('src-tauri/Cargo.toml') }}
+          restore-keys: cargo-${{ matrix.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      # src-tauri/icons is generated rather than committed: `tauri icon` derives
+      # the whole platform set (ico, icns, every PNG size) from one source PNG.
+      - name: Generate app icons
+        run: npx --yes @tauri-apps/cli@^2 icon resources/icon.png
+
+      - name: Build installers
+        run: >
+          npx --yes @tauri-apps/cli@^2 build
+          --bundles ${{ matrix.bundles }}
+          ${{ matrix.target && format('--target {0}', matrix.target) || '' }}
+
+      - name: Collect installers
+        shell: bash
+        run: |
+          mkdir -p out
+          base="src-tauri/target${{ matrix.target && format('/{0}', matrix.target) || '' }}/release/bundle"
+          find "$base" -type f \
+            \( -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' -o -name '*-setup.exe' \) \
+            -exec cp {} out/ \;
+          echo "── Installer sizes ──"
+          ls -lh out/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: out/*
+          if-no-files-found: error
+          retention-days: 30
+
+  # ── Android APK + AAB ───────────────────────────────────────────────────────
+  android:
+    if: github.event_name != 'workflow_dispatch' || inputs.android
+    name: Android
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the web bundle
+        run: npm run build
+
+      # Not saved to package.json: these are needed only by this job, and
+      # keeping them out means `npm ci` stays lean for web and CLI users.
+      - name: Install Capacitor
+        run: |
+          npm install --no-save \
+            @capacitor/core@^7 \
+            @capacitor/cli@^7 \
+            @capacitor/android@^7
+
+      - name: Generate the Android project
+        run: |
+          npx cap add android
+          npx cap sync android
+          # The runner image ships the SDK; point Gradle at it explicitly so the
+          # build does not depend on which env var Gradle happens to read.
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+
+      - name: Generate launcher icons and splash
+        run: npx --yes @capacitor/assets@^3 generate --android
+
+      - name: Enable R8 shrinking
+        run: node scripts/shrink-android-release.mjs
+
+      - name: Build APK and AAB
+        working-directory: android
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
+
+      # Unsigned output is fine for inspection and for re-signing downstream.
+      # A signed, installable APK is produced below when the repository has
+      # keystore secrets configured.
+      - name: Sign the release build
+        id: sign
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          BUILD_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          "$BUILD_TOOLS/zipalign" -p -f 4 \
+            android/app/build/outputs/apk/release/app-release-unsigned.apk \
+            "$RUNNER_TEMP/aligned.apk"
+          "$BUILD_TOOLS/apksigner" sign \
+            --ks "$RUNNER_TEMP/release.jks" \
+            --ks-pass "pass:$KEYSTORE_PASSWORD" \
+            --ks-key-alias "$KEY_ALIAS" \
+            --key-pass "pass:$KEY_PASSWORD" \
+            --out android/app/build/outputs/apk/release/pixeldeck-release.apk \
+            "$RUNNER_TEMP/aligned.apk"
+          rm -f "$RUNNER_TEMP/release.jks" "$RUNNER_TEMP/aligned.apk"
+
+      # Always ship something installable, signed or not. A debug APK carries
+      # Android's standard debug key, so testers can sideload it directly.
+      - name: Build a sideloadable debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Collect Android output
+        run: |
+          mkdir -p out
+          find android/app/build/outputs -type f \( -name '*.apk' -o -name '*.aab' \) \
+            -exec cp {} out/ \;
+          echo "── Android artifact sizes ──"
+          ls -lh out/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pixeldeck-android
+          path: out/*
+          if-no-files-found: error
+          retention-days: 30
+
+  # ── Attach everything to the GitHub release on a v* tag ─────────────────────
+  release:
+    name: Attach to release
+    needs: [desktop, android]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List what will be published
+        run: ls -lh artifacts/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          fail_on_unmatched_files: true

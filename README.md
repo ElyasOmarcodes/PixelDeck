@@ -141,6 +141,25 @@ node cli/index.mjs export \
 
 Output directories are created automatically. See [`cli/README.md`](cli/README.md) for full CLI docs, locale export, and YAML batch configuration.
 
+### Desktop & Android apps
+
+The same bundle also ships as a native app — no second codebase, and no bundled
+Chromium:
+
+| Target | Shell | Typical download |
+|---|---|---|
+| Windows / macOS / Linux | Tauri v2 (uses the OS webview) | 1.8 MB `.deb` (measured on x64) |
+| Android | Capacitor | ~4–6 MB APK |
+
+```bash
+npm run app:desktop   # release installer for the current OS (needs a Rust toolchain)
+```
+
+CI builds all of them from [`.github/workflows/apps.yml`](.github/workflows/apps.yml)
+and attaches the installers to every `v*` release. See
+[`docs/native-apps.md`](docs/native-apps.md) for prerequisites, Android signing,
+and how the size is kept down.
+
 ---
 
 ## Tech Stack
@@ -154,7 +173,10 @@ Output directories are created automatically. See [`cli/README.md`](cli/README.m
 | State management | Zustand 5 + zundo (undo/redo) |
 | Drag & drop | dnd-kit |
 | Headless export | Playwright (Chromium) |
-| Typography | Google Fonts (80+ curated families) |
+| Typography | Google Fonts (95+ curated families, incl. Pashto/Persian/Arabic) |
+| Interface languages | English, Pashto (پښتو), Persian/Dari (فارسی) with RTL layout |
+| Desktop shell | Tauri v2 (Rust + OS webview) |
+| Android shell | Capacitor |
 
 ---
 
@@ -162,9 +184,12 @@ Output directories are created automatically. See [`cli/README.md`](cli/README.m
 
 ```text
 pixeldeck/
-├── cli/      # Headless Playwright export CLI and batch config examples
-├── public/   # Static assets and bundled templates (public/templates/)
-└── src/      # React app, Zustand stores, Konva canvas, domain types, utilities
+├── cli/          # Headless Playwright export CLI and batch config examples
+├── public/       # Static assets and bundled templates (public/templates/)
+├── resources/    # Icon and splash sources for the native app builds
+├── scripts/      # Build-time helpers (Android release shrinking)
+├── src-tauri/    # Desktop shell: Rust entry point, window + bundle config
+└── src/          # React app, Zustand stores, Konva canvas, i18n, utilities
 ```
 
 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full system design, data model, and export pipeline.

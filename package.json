@@ -13,7 +13,14 @@
     "vite",
     "cli",
     "playwright",
-    "localization"
+    "localization",
+    "tauri",
+    "capacitor",
+    "desktop-app",
+    "android",
+    "pashto",
+    "i18n",
+    "rtl"
   ],
   "license": "MIT",
   "author": "PixelDeck contributors",
@@ -35,6 +42,9 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
+    "app:desktop": "npx @tauri-apps/cli@^2 icon resources/icon.png && npx @tauri-apps/cli@^2 build",
+    "app:desktop:dev": "npx @tauri-apps/cli@^2 dev",
+    "app:android": "npm run build && npx cap sync android && npx cap open android",
     "cli": "node cli/index.mjs",
     "test": "vitest run",
     "test:watch": "vitest"

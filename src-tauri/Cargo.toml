@@ -1,0 +1,29 @@
+[package]
+name = "pixeldeck"
+version = "0.0.0" # real version comes from ../package.json via tauri.conf.json
+description = "Visual editor for App Store & Play Store screenshots"
+authors = ["PixelDeck contributors"]
+license = "MIT"
+repository = "https://github.com/Pr0xS/PixelDeck"
+edition = "2021"
+rust-version = "1.77.2"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# No Tauri plugins: PixelDeck is a self-contained local-first web app. It stores
+# projects in localStorage/IndexedDB and exports PNGs through the browser
+# download path, so the shell needs no filesystem, shell or dialog permissions.
+tauri = { version = "2", features = [] }
+
+# Tuned for binary size — the point of shipping Tauri instead of Electron is a
+# few MB instead of a hundred. Keep these together; dropping any one of them
+# costs roughly 15-30% of the stripped binary.
+[profile.release]
+opt-level = "s"     # optimise for size rather than speed
+lto = true          # link-time optimisation across crates
+codegen-units = 1   # one unit lets LLVM inline and dedupe across the crate
+panic = "abort"     # no unwinding tables
+strip = true        # drop symbols
+incremental = false
